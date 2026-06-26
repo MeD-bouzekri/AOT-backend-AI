@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="logo-violet.png" alt="Orchestra" width="120" />
-
-# Orchestra
+<img src="logo-violet.png" alt="Orchestra" width="200" />
 
 ### Dynamic Adaptive Enterprise Orchestrator
 
