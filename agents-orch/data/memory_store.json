@@ -1,0 +1,58 @@
+[
+  {
+    "run_id": "live1",
+    "domain": "hr_onboarding",
+    "summary": "Onboard a remote mid-level software engineer contractor.",
+    "request": "Onboard Bilal, a mid software engineer contractor, remote, needs production access",
+    "outcome": "frozen",
+    "rule_id": "SEC-04",
+    "department": "it",
+    "lesson": "Contractor is requesting production access. Blocked pending security review.",
+    "ts": "2026-06-26T08:00:55+00:00"
+  },
+  {
+    "run_id": "run-4fdb7f6682",
+    "domain": "hr_onboarding",
+    "summary": "Onboarding",
+    "request": "Onboard Anas, a contractor needing production access",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-26T08:46:34+00:00"
+  },
+  {
+    "run_id": "run-991dd076e4",
+    "domain": "procurement",
+    "summary": "Approve an annual $9,000 Notion license for the design team.",
+    "request": "Approve a $9,000 annual Notion license for the design team.",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-26T13:55:18+00:00"
+  },
+  {
+    "run_id": "run-dbc38c3fc8",
+    "domain": "hr_onboarding",
+    "summary": "Onboard a remote mid-level software engineer contractor requiring production access.",
+    "request": "Onboard hamid djewal, a mid-level software engineer contractor, remote, who needs production access.",
+    "outcome": "frozen",
+    "rule_id": "SEC-04",
+    "department": "it",
+    "lesson": "Contractor is requesting production access. Blocked pending security review.",
+    "ts": "2026-06-26T14:08:18+00:00"
+  },
+  {
+    "run_id": "run-2edce92070",
+    "domain": "hr_onboarding",
+    "summary": "Onboard a mid-level software engineer contractor who requires production access.",
+    "request": "Onboard Karim, a mid software engineer contractor, remote, who needs production access.",
+    "outcome": "denied",
+    "rule_id": "SEC-04",
+    "department": "it",
+    "lesson": "SEC-04 cleared by CISO: deny",
+    "ts": "2026-06-26T14:16:35+00:00",
+    "feedback_ts": "2026-06-26T14:17:21+00:00"
+  }
+]

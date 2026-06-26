@@ -1,0 +1,54 @@
+{
+  "departments": [
+    { "key": "hr", "name": "Human Resources", "responsibility": "Onboarding paperwork, benefits, scheduling, people coordination.", "enabled": true },
+    { "key": "it", "name": "Information Technology", "responsibility": "Accounts, equipment, system access provisioning.", "enabled": true },
+    { "key": "finance", "name": "Finance", "responsibility": "Budget validation, vendor risk, payroll, procurement.", "enabled": true }
+  ],
+  "capabilities": [
+    { "name": "hr_manager", "department": "hr", "level": "manager", "role": "Assigns onboarding tasks to HR workers and synthesizes their results.", "mode": "react", "tools": [] },
+    { "name": "docs_worker", "department": "hr", "level": "worker", "role": "Determine and send all required onboarding documents with their policy deadlines (NDA and background check before Day 1, I-9, tax, contractor IP, data-privacy agreement for sensitive roles).", "mode": "single", "tools": ["doc_catalog", "send_doc"] },
+    { "name": "benefits_worker", "department": "hr", "level": "worker", "role": "Enroll benefits and set payroll/tax by employment type (health 30-day window, 401k immediate with 4% match, life Day 1, PTO from Day 1). Contractors are ineligible.", "mode": "rule", "tools": ["benefits_catalog", "enroll_benefits"] },
+    { "name": "scheduler_worker", "department": "hr", "level": "worker", "role": "Build the day-1 and week-1 onboarding schedule (orientation, IT setup, manager 1:1, team intro) respecting the start date.", "mode": "single", "tools": ["calendar", "schedule_event"] },
+    { "name": "training_worker", "department": "hr", "level": "worker", "role": "Assign mandatory trainings with policy deadlines (security awareness 7 days, data privacy 14 days, compliance 30 days; PII handling for sensitive roles).", "mode": "single", "tools": ["training_catalog", "assign_training"] },
+
+    { "name": "it_manager", "department": "it", "level": "manager", "role": "Assigns provisioning tasks to IT workers and synthesizes their results.", "mode": "react", "tools": [] },
+    { "name": "accounts_worker", "department": "it", "level": "worker", "role": "Decide accounts to create (email, SSO, dept tools).", "mode": "single", "tools": ["app_catalog", "create_account"] },
+    { "name": "equipment_worker", "department": "it", "level": "worker", "role": "Pick equipment tier by seniority and delivery by location.", "mode": "rule", "tools": ["equipment_catalog", "order_equipment"] },
+    { "name": "access_worker", "department": "it", "level": "worker", "role": "Decide least-privilege access scope; flag sensitive grants.", "mode": "single", "tools": ["access_matrix", "grant_access"] },
+
+    { "name": "finance_manager", "department": "finance", "level": "manager", "role": "Assigns finance tasks to workers and synthesizes their results.", "mode": "react", "tools": [] },
+    { "name": "budget_worker", "department": "finance", "level": "worker", "role": "Check amount vs department budget and threshold tier.", "mode": "rule", "tools": ["budget_store"] },
+    { "name": "vendor_risk_worker", "department": "finance", "level": "worker", "role": "Assess vendor credit, breach history, and data-processing risk.", "mode": "react", "tools": ["credit_check", "breach_history", "vendor_directory"] },
+    { "name": "payroll_worker", "department": "finance", "level": "worker", "role": "Set up payroll/comp profile or process a payment.", "mode": "rule", "tools": ["payroll_system"] },
+
+    { "name": "invoice_validator_worker", "department": "finance", "level": "worker", "role": "Validate the supplier invoice against Algerian rules: mandatory fields, supplier and customer NIF, fiscal stamp, and correct 19% VAT calculation.", "mode": "single", "tools": ["invoice_validator", "nif_check"] },
+    { "name": "matching_worker", "department": "finance", "level": "worker", "role": "Perform three-way matching of the invoice against its purchase order and goods receipt; flag any mismatch.", "mode": "rule", "tools": ["three_way_match"] },
+    { "name": "fraud_sentinel_worker", "department": "finance", "level": "worker", "role": "Detect fraud and anomalies: duplicate invoices, split invoices from the same vendor, and amounts placed just below an approval threshold.", "mode": "single", "tools": ["fraud_check"] },
+    { "name": "payment_worker", "department": "finance", "level": "worker", "role": "Schedule the approved supplier payment using the preferred method (bank transfer or cheque).", "mode": "rule", "tools": ["record_payment"] },
+
+    { "name": "compliance_overseer", "department": "system", "level": "governance", "role": "Deterministically check hard policy rules; raise a BLOCK on violation.", "mode": "rule", "tools": ["policy_store"] },
+    { "name": "risk_overseer", "department": "system", "level": "governance", "role": "Deterministically check spend ceilings/anomalies; raise a HALT on breach.", "mode": "rule", "tools": ["policy_store"] },
+    { "name": "approver", "department": "system", "level": "governance", "role": "Apply authority and threshold rules; route to human approval when required.", "mode": "rule", "tools": ["employee_directory"] },
+    { "name": "reporter", "department": "system", "level": "governance", "role": "Compose the final report, readiness/decision, and audit summary.", "mode": "single", "tools": [] }
+  ],
+  "request_types": [
+    {
+      "domain": "hr_onboarding",
+      "label": "Employee Onboarding",
+      "required_fields": ["name", "role", "department", "seniority", "location", "employment_type"],
+      "trigger_hint": "onboard, new hire, starting, joins, first day"
+    },
+    {
+      "domain": "procurement",
+      "label": "Procurement / Vendor Approval",
+      "required_fields": ["vendor", "item", "amount"],
+      "trigger_hint": "approve, purchase, subscription, license, vendor, buy, $ amount"
+    },
+    {
+      "domain": "invoice_ap",
+      "label": "Supplier Invoice / Accounts Payable (Algeria)",
+      "required_fields": ["supplier", "amount_ttc"],
+      "trigger_hint": "invoice, facture, supplier bill, accounts payable, pay supplier, NIF, fiscal stamp, DZD, three-way match"
+    }
+  ]
+}

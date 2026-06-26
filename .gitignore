@@ -1,0 +1,69 @@
+# ── OrchestrAI — by the team AOT ──
+
+# Internal docs (not for the repo)
+agents-orch/docs/
+
+# Secrets / environment
+.env
+.env.*
+*.env
+!.env.example
+
+# Python bytecode & caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+.virtualenv/
+
+# Databases (runtime state — regenerated)
+*.db
+*.sqlite
+*.sqlite3
+orchestrai.db
+gateway/orchestrai.db
+
+# Test / coverage / build
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Logs & temp
+*.log
+*.tmp
+*.bak
+next-panic-*.log
+
+# Keycloak runtime data
+gateway/keycloak/data/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# OneDrive sync artifacts
+*.lnk
+~$*
+
+# Node (if any frontend lands here)
+node_modules/
+.next/

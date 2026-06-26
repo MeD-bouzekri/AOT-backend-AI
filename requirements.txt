@@ -1,0 +1,31 @@
+# Orchestra — backend dependencies
+# by the team AOT
+
+# ── Web gateway (FastAPI + ASGI server) ──
+fastapi==0.125.0
+uvicorn==0.38.0
+websockets==15.0.1
+
+# ── Data contracts & persistence ──
+pydantic==2.12.5
+sqlmodel==0.0.39
+
+# ── Auth (Keycloak JWT verification, RS256) ──
+pyjwt==2.10.1
+cryptography==46.0.5
+
+# ── HTTP client (Ollama validation, Keycloak admin) ──
+httpx==0.28.1
+requests==2.32.5
+
+# ── Orchestration engine ──
+langgraph==1.2.6
+langchain-core==1.4.8
+
+# ── LLM providers ──
+langchain-ollama==1.1.0
+langchain-google-genai==4.2.5
+langchain-anthropic==0.3.0
+
+# ── Config ──
+python-dotenv==1.2.1

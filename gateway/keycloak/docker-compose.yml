@@ -1,0 +1,23 @@
+# Keycloak for OrchestrAI — auto-imports the orchestrai realm (roles, client, demo users).
+#
+#   docker compose -f gateway/keycloak/docker-compose.yml up
+#
+# Admin console:  http://localhost:8080   (admin / admin)
+# Realm:          orchestrai  (imported on first start)
+# Then run the gateway with:
+#   DEV_AUTH=0
+#   KEYCLOAK_JWKS_URL=http://localhost:8080/realms/orchestrai/protocol/openid-connect/certs
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: orchestrai-keycloak
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./realm-orchestrai.json:/opt/keycloak/data/import/realm-orchestrai.json:ro

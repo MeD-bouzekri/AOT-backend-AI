@@ -1,0 +1,87 @@
+{
+  "company": {
+    "name": "Numidia",
+    "industry": "Software / AI",
+    "size": "250 employees",
+    "locations": ["Algiers HQ", "Oran", "Constantine", "Remote"],
+    "timezone": "Africa/Algiers"
+  },
+  "thresholds": {
+    "auto_approve_spend_limit": 10000,
+    "manager_spend_limit": 50000,
+    "director_spend_limit": 100000,
+    "hard_spend_ceiling": 1000000,
+    "max_vendor_risk_score": 0.70
+  },
+  "hard_rules": [
+    {
+      "id": "SEC-04",
+      "domain": "shared",
+      "description": "Contractors may not receive production access without security sign-off.",
+      "condition": "employment_type == 'contractor' and 'production' in access_scope",
+      "action": "block",
+      "message": "Contractor is requesting production access. Blocked pending security review.",
+      "required_authority": "CISO",
+      "enabled": true
+    },
+    {
+      "id": "PROC-07",
+      "domain": "procurement",
+      "description": "SaaS vendors processing personal data require a Data Processing Agreement.",
+      "condition": "is_data_processor == true and has_dpa == false",
+      "action": "block",
+      "message": "Vendor processes personal data but no Data Processing Agreement is on file.",
+      "required_authority": "DPO",
+      "enabled": true
+    },
+    {
+      "id": "FIN-12",
+      "domain": "procurement",
+      "description": "Spend above the hard ceiling requires executive halt and review.",
+      "condition": "amount > 1000000",
+      "action": "halt",
+      "message": "Spend exceeds the hard ceiling of $1,000,000. Fund-wide halt for executive review.",
+      "required_authority": "CFO",
+      "enabled": true
+    },
+    {
+      "id": "DZ-INV-01",
+      "domain": "invoice_ap",
+      "description": "Invoice missing mandatory legal fields (NIF or fiscal stamp) cannot be paid under Algerian tax law.",
+      "condition": "missing supplier_nif/customer_nif/fiscal_stamp",
+      "action": "block",
+      "message": "Invoice is missing mandatory legal fields (NIF / fiscal stamp). Cannot be processed under Algerian tax law.",
+      "required_authority": "DPO",
+      "enabled": true
+    },
+    {
+      "id": "DZ-INV-02",
+      "domain": "invoice_ap",
+      "description": "Fraud or anomaly detected (duplicate, split invoices, or amount just below a threshold).",
+      "condition": "fraud_check.risk == high",
+      "action": "block",
+      "message": "Fraud/anomaly risk detected on this invoice. Blocked pending compliance review.",
+      "required_authority": "CFO",
+      "enabled": true
+    },
+    {
+      "id": "DZ-INV-03",
+      "domain": "invoice_ap",
+      "description": "Invoice above the board threshold (10M DZD) requires executive halt.",
+      "condition": "amount_ttc > 10000000",
+      "action": "halt",
+      "message": "Invoice exceeds the board approval threshold of 10,000,000 DZD. Halted for board review.",
+      "required_authority": "CFO",
+      "enabled": true
+    }
+  ],
+  "authorities": {
+    "CISO": ["anas.alasmer@numidia.ia"],
+    "CFO": ["mohamed.bouzekri@numidia.ia"],
+    "DPO": ["yasmine.haddad@numidia.ia"]
+  },
+  "sla_defaults": {
+    "hr_onboarding": 7,
+    "procurement": 5
+  }
+}

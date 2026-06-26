@@ -1,0 +1,7 @@
+[
+  { "supplier": "SARL TechSupplies", "supplier_nif": "099912345678901", "invoice_number": "TS-2026-0455", "amount_ttc": 480000, "invoice_date": "2026-06-05" },
+  { "supplier": "SARL TechSupplies", "supplier_nif": "099912345678901", "invoice_number": "TS-2026-0461", "amount_ttc": 495000, "invoice_date": "2026-06-12" },
+  { "supplier": "SARL TechSupplies", "supplier_nif": "099912345678901", "invoice_number": "TS-2026-0470", "amount_ttc": 490000, "invoice_date": "2026-06-18" },
+  { "supplier": "EURL BuroPlus", "supplier_nif": "099987654321098", "invoice_number": "BP-1190", "amount_ttc": 1250000, "invoice_date": "2026-06-10" },
+  { "supplier": "Import Mediterranee", "supplier_nif": "099955544433322", "invoice_number": "IM-3301", "amount_ttc": 7800000, "invoice_date": "2026-06-08" }
+]

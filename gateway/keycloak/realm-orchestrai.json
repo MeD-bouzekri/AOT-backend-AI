@@ -1,0 +1,217 @@
+{
+  "realm": "orchestrai",
+  "enabled": true,
+  "displayName": "OrchestrAI",
+  "accessTokenLifespan": 1800,
+  "sslRequired": "none",
+  "roles": {
+    "realm": [
+      { "name": "company_admin", "description": "Super admin — sees all departments, config, registry" },
+      { "name": "hr_admin", "description": "HR department admin" },
+      { "name": "it_admin", "description": "IT department admin" },
+      { "name": "finance_admin", "description": "Finance department admin" },
+      { "name": "ciso", "description": "Chief Information Security Officer — clears security freezes (e.g. SEC-04 contractor prod access)" },
+      { "name": "cfo", "description": "Chief Financial Officer — clears finance/spend freezes (e.g. FIN-12)" },
+      { "name": "dpo", "description": "Data Protection Officer — clears data-privacy freezes (e.g. PROC-07, DZ-INV-01 missing DPA/NIF)" },
+      { "name": "requester", "description": "Can submit requests and view own runs" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "orchestrai-dashboard",
+      "name": "OrchestrAI Dashboard (Next.js)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:3000/*"],
+      "webOrigins": ["http://localhost:3000"],
+      "attributes": { "post.logout.redirect.uris": "http://localhost:3000/*" },
+      "defaultClientScopes": ["roles", "profile", "email", "web-origins", "department-scope"],
+      "optionalClientScopes": ["offline_access"]
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "department-scope",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "true", "display.on.consent.screen": "false" },
+      "protocolMappers": [
+        {
+          "name": "department",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "department",
+            "claim.name": "department",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "roles",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "false", "display.on.consent.screen": "false" },
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": {
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "false"
+          }
+        }
+      ]
+    },
+    {
+      "name": "profile",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "true", "display.on.consent.screen": "false" },
+      "protocolMappers": [
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "username",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "full name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-full-name-mapper",
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "given name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "firstName",
+            "claim.name": "given_name",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "family name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "lastName",
+            "claim.name": "family_name",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "email",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "true", "display.on.consent.screen": "false" },
+      "protocolMappers": [
+        {
+          "name": "email",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "email",
+            "claim.name": "email",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "web-origins",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "false", "display.on.consent.screen": "false" },
+      "protocolMappers": [
+        {
+          "name": "allowed web origins",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-allowed-origins-mapper",
+          "config": {}
+        }
+      ]
+    }
+  ],
+  "defaultDefaultClientScopes": [
+    "roles", "profile", "email", "web-origins", "department-scope"
+  ],
+  "users": [
+    {
+      "username": "admin1", "enabled": true, "email": "amine.bouzidi@numidia.ia",
+      "firstName": "Amine", "lastName": "Bouzidi",
+      "credentials": [{ "type": "password", "value": "admin1", "temporary": false }],
+      "realmRoles": ["company_admin"]
+    },
+    {
+      "username": "hr1", "enabled": true, "email": "karim.belkacem@numidia.ia",
+      "firstName": "Karim", "lastName": "Belkacem",
+      "credentials": [{ "type": "password", "value": "hr1", "temporary": false }],
+      "realmRoles": ["hr_admin"],
+      "attributes": { "department": ["hr"] }
+    },
+    {
+      "username": "it1", "enabled": true, "email": "lamia.cherif@numidia.ia",
+      "firstName": "Lamia", "lastName": "Cherif",
+      "credentials": [{ "type": "password", "value": "it1", "temporary": false }],
+      "realmRoles": ["it_admin"],
+      "attributes": { "department": ["it"] }
+    },
+    {
+      "username": "finance1", "enabled": true, "email": "sofiane.mansouri@numidia.ia",
+      "firstName": "Sofiane", "lastName": "Mansouri",
+      "credentials": [{ "type": "password", "value": "finance1", "temporary": false }],
+      "realmRoles": ["finance_admin"],
+      "attributes": { "department": ["finance"] }
+    },
+    {
+      "username": "ciso", "enabled": true, "email": "anas.alasmer@numidia.ia",
+      "firstName": "Anas", "lastName": "Alasmer",
+      "credentials": [{ "type": "password", "value": "ciso", "temporary": false }],
+      "realmRoles": ["ciso", "it_admin"],
+      "attributes": { "department": ["it"] }
+    },
+    {
+      "username": "cfo", "enabled": true, "email": "mohamed.bouzekri@numidia.ia",
+      "firstName": "Mohamed", "lastName": "Bouzekri",
+      "credentials": [{ "type": "password", "value": "cfo", "temporary": false }],
+      "realmRoles": ["cfo", "finance_admin"],
+      "attributes": { "department": ["finance"] }
+    },
+    {
+      "username": "dpo", "enabled": true, "email": "yasmine.haddad@numidia.ia",
+      "firstName": "Yasmine", "lastName": "Haddad",
+      "credentials": [{ "type": "password", "value": "dpo", "temporary": false }],
+      "realmRoles": ["dpo"]
+    }
+  ]
+}

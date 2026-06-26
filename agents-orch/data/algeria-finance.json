@@ -1,0 +1,121 @@
+{
+  "niche": "finance",
+  "country": "algeria",
+  "version": "2026-Q2",
+  "last_updated": "2026-06-01",
+  "description": "Algerian Finance & Accounts Payable Policies for OrchestrAI",
+
+  "legal_basis": "Décret exécutif n°05-468 du 10 décembre 2005 (factures et documents commerciaux); Loi de Finances 2022 (rejet de la déduction TVA si NIF fournisseur absent)",
+
+  "tax_rules": {
+    "vat_rate_standard": 19,
+    "vat_rate_reduced": 9,
+    "vat_mandatory_on_invoices": true,
+    "fiscal_stamp_rule": "timbre fiscal de 1% UNIQUEMENT sur les paiements en espèces (cash), borné entre 5 et 2500 DZD. Aucun timbre requis pour virement ou chèque.",
+    "fiscal_stamp_rate_percent": 1,
+    "fiscal_stamp_min_dzd": 5,
+    "fiscal_stamp_max_dzd": 2500,
+    "fiscal_stamp_applies_to": "cash_only",
+    "minimum_record_retention_years": 10,
+    "monthly_vat_declaration_deadline": "20th_of_next_month"
+  },
+
+  "invoice_requirements": {
+    "mandatory_identifiers": {
+      "NIF": "Numéro d'Identification Fiscale (15 chiffres) — obligatoire; son absence fait perdre le droit à déduction TVA (LF 2022)",
+      "NIS": "Numéro d'Identification Statistique (ONS)",
+      "RC": "Registre de Commerce (format XX/00-XXXXXXXY##)",
+      "AI": "Article d'Imposition"
+    },
+    "mandatory_fields": [
+      "supplier_nif",
+      "supplier_nis",
+      "supplier_rc",
+      "supplier_ai",
+      "customer_nif",
+      "invoice_number",
+      "invoice_date",
+      "description",
+      "quantity",
+      "unit_price",
+      "total_ht",
+      "vat_rate",
+      "vat_amount",
+      "total_ttc"
+    ],
+    "fiscal_stamp_conditional": "required only if payment is in cash",
+    "must_be_in_arabic_or_french": true,
+    "e_invoice_format_supported": "PDF + structured XML (mandatory rollout anticipated ~2027)"
+  },
+
+  "approval_thresholds": {
+    "manager_approval_limit": 500000,
+    "finance_lead_approval_limit": 2000000,
+    "cfo_mandatory_threshold": 5000000,
+    "board_approval_threshold": 10000000
+  },
+
+  "foreign_transaction_rules": {
+    "foreign_currency_payment_requires": [
+      "valid_contract",
+      "commercial_invoice",
+      "certificate_of_origin",
+      "bank_approval_for_large_amounts"
+    ],
+    "letter_of_credit_required_above": 10000000,
+    "strict_foreign_exchange_controls": true
+  },
+
+  "fraud_and_anomaly_rules": {
+    "flag_duplicate_invoices": true,
+    "flag_split_invoices": true,
+    "same_vendor_multiple_invoices_monthly_threshold": 3,
+    "amount_just_below_threshold_flag": true,
+    "unusual_amount_variation_percent": 25
+  },
+
+  "import_rules": {
+    "import_duties_applicable": true,
+    "duty_rates": "0% to 60% depending on product category",
+    "requires_customs_declaration": true
+  },
+
+  "payment_rules": {
+    "preferred_payment_methods": ["bank_transfer", "cheque"],
+    "early_payment_discount_encouraged": true,
+    "late_payment_penalty": "automatic_interest_after_30_days"
+  },
+
+  "compliance_checks": [
+    {
+      "name": "NIF_validation",
+      "required": true,
+      "description": "Check supplier and customer Tax ID (NIF)"
+    },
+    {
+      "name": "three_way_matching",
+      "required": true,
+      "description": "Invoice + Purchase Order + Goods Receipt"
+    },
+    {
+      "name": "tax_stamp_check",
+      "required": true
+    },
+    {
+      "name": "vat_calculation_verification",
+      "required": true
+    }
+  ],
+
+  "escalation_rules": {
+    "high_risk_vendor": ["finance_lead", "legal"],
+    "foreign_transaction": ["finance_lead", "compliance_officer"],
+    "amount_above_cfo": ["cfo", "general_manager"],
+    "detected_fraud_risk": ["compliance_officer", "audit"]
+  },
+
+  "proactive_alerts": {
+    "cashflow_impact_threshold": 5000000,
+    "vendor_concentration_warning": "more_than_30_percent_of_monthly_invoices"
+  }
+}

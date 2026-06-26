@@ -1,0 +1,206 @@
+{
+  "_comment": "Company-specific policy data. Filled by the admin in the setup wizard. Tools READ this; nothing is hardcoded in Python. Change a value here -> the agents behave differently. Another company ships a different file.",
+  "equipment_tiers": {
+    "intern": "MacBook Air 14\"",
+    "junior": "MacBook Air 14\"",
+    "mid": "MacBook Pro 14\"",
+    "senior": "MacBook Pro 16\"",
+    "staff": "MacBook Pro 16\"",
+    "exec": "MacBook Pro 16\""
+  },
+  "equipment_addons": {
+    "engineer": [
+      "Dual Monitors",
+      "Mechanical Keyboard",
+      "Headset"
+    ],
+    "default": [
+      "Single Monitor",
+      "Headset"
+    ]
+  },
+  "engineer_keywords": [
+    "engineer",
+    "developer",
+    "devops",
+    "data"
+  ],
+  "remote_home_office_allowance_usd": 500,
+  "equipment_sla": "within 3 business days",
+  "documents": {
+    "base": [
+      {
+        "doc": "NDA",
+        "deadline": "before Day 1"
+      },
+      {
+        "doc": "Background Check",
+        "deadline": "before Day 1"
+      },
+      {
+        "doc": "Offer Letter",
+        "deadline": "before Day 1"
+      },
+      {
+        "doc": "Tax Form (W-4/W-8)",
+        "deadline": "Day 1"
+      },
+      {
+        "doc": "Direct Deposit",
+        "deadline": "Day 3"
+      }
+    ],
+    "full_time": [
+      {
+        "doc": "I-9 / Work Authorization",
+        "deadline": "Day 1"
+      },
+      {
+        "doc": "Benefits Enrollment",
+        "deadline": "Day 30"
+      },
+      {
+        "doc": "Employee Handbook ACK",
+        "deadline": "Day 5"
+      }
+    ],
+    "contractor": [
+      {
+        "doc": "IP Assignment Agreement",
+        "deadline": "before Day 1"
+      },
+      {
+        "doc": "Contractor MSA",
+        "deadline": "before Day 1"
+      },
+      {
+        "doc": "W-9 / Tax Residency",
+        "deadline": "Day 1"
+      }
+    ],
+    "intern": [
+      {
+        "doc": "Internship Agreement",
+        "deadline": "before Day 1"
+      },
+      {
+        "doc": "School Verification",
+        "deadline": "Day 1"
+      }
+    ],
+    "remote_extra": [
+      {
+        "doc": "Remote Work Policy ACK",
+        "deadline": "Day 1"
+      }
+    ],
+    "sensitive_extra": [
+      {
+        "doc": "Data Privacy & PII Handling Agreement",
+        "deadline": "Day 1"
+      }
+    ]
+  },
+  "trainings": {
+    "base": [
+      {
+        "training": "Security Awareness",
+        "deadline_days": 7
+      },
+      {
+        "training": "Data Privacy",
+        "deadline_days": 14
+      },
+      {
+        "training": "Compliance & Code of Conduct",
+        "deadline_days": 30
+      }
+    ],
+    "sensitive_extra": [
+      {
+        "training": "PII / Sensitive Data Handling",
+        "deadline_days": 7
+      }
+    ]
+  },
+  "benefits": {
+    "full_time": [
+      "Health",
+      "Dental",
+      "Vision",
+      "401k (4% match)",
+      "Life",
+      "PTO (15 days/yr)"
+    ],
+    "intern": [
+      "Limited Health",
+      "Commuter"
+    ],
+    "contractor": [],
+    "enrollment_window_days": 30
+  },
+  "accounts": {
+    "base": [
+      "Email (Workspace)",
+      "SSO Identity",
+      "Slack",
+      "Calendar",
+      "VPN"
+    ],
+    "by_department": {
+      "engineering": [
+        "GitHub",
+        "CI/CD",
+        "Jira",
+        "Cloud Console"
+      ],
+      "sales": [
+        "CRM (Salesforce)",
+        "Dialer",
+        "LinkedIn Sales Nav"
+      ],
+      "finance": [
+        "ERP",
+        "BI / Looker",
+        "Expense System"
+      ],
+      "hr": [
+        "HRIS",
+        "ATS",
+        "Payroll Admin"
+      ]
+    },
+    "email_sla": "Day 1 before 9 AM",
+    "role_tools_sla": "within 2 business days"
+  },
+  "access": {
+    "baseline": [
+      "email",
+      "Slack",
+      "internal_wiki",
+      "team_drive",
+      "VPN"
+    ],
+    "elevated_scopes": [
+      "production",
+      "prod",
+      "financial_systems",
+      "pii_store",
+      "admin"
+    ],
+    "elevated_approval": "manager approval + security review (5-day process)",
+    "principle": "least privilege"
+  },
+  "department_budgets": {
+    "finance": 500000,
+    "it": 300000,
+    "hr": 150000,
+    "engineering": 800000,
+    "default": 250000
+  },
+  "default_llm": {
+    "provider": "ollama",
+    "base_url": "https://overmorally-bootyless-luciana.ngrok-free.dev/",
+    "model": "gemma4:e4b-it-qat"
+  }
+}
