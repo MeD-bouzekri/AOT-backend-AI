@@ -1,16 +1,16 @@
 """
-planner.py — the Planner (the brain), first real agent.
+planner.py - the Planner (the brain), first real agent.
 
 Reads a natural-language request + the CompanyContext, and REASONS its way to a DispatchPlan:
 which departments are needed, each one's mandate, dependencies, human checkpoints, deadline.
 
 The intelligence lives in the LLM (Gemini 2.5 Flash). It is fed the company's real menu of
-departments and capabilities and decides the team by judgment — e.g. a finance hire pulls in
+departments and capabilities and decides the team by judgment - e.g. a finance hire pulls in
 the Finance department for payroll/comp, not just HR + IT.
 
 Paths:
-    LIVE  (default) → Gemini reasons over the CompanyContext, returns a structured plan.
-    DEMO            → a deterministic fallback for stage safety if no key / offline.
+    LIVE  (default) -> Gemini reasons over the CompanyContext, returns a structured plan.
+    DEMO            -> a deterministic fallback for stage safety if no key / offline.
 
 Run standalone:
     python -m agents.planner
@@ -28,7 +28,7 @@ from context_loader import load_company_context
 
 # ───────────────────────── the brain (LLM) ─────────────────────────
 
-PLANNER_SYSTEM = """You are the Planner — the chief orchestrator of an enterprise
+PLANNER_SYSTEM = """You are the Planner - the chief orchestrator of an enterprise
 multi-agent system. You read one request in plain language and design the MINIMAL, CORRECT
 team to handle it. You are precise, not exhaustive. A great plan includes exactly what the
 request needs and nothing more.
@@ -43,24 +43,24 @@ CORE PRINCIPLES
     * A junior, non-sensitive onboarding may need only HR + IT.
 - Managers are implicit. List only the WORKERS you need; the system runs the relevant
   department manager automatically. Do NOT list "*_manager" entries.
-- Governance is automatic. The compliance and risk overseers ALWAYS run as a final gate —
+- Governance is automatic. The compliance and risk overseers ALWAYS run as a final gate -
   do NOT add "compliance_overseer", "risk_overseer", "approver", or "reporter" to
   required_workers. Instead, express oversight through hitl_points when a human must decide.
 
 HOW TO DECIDE EACH FIELD
-1. domain        — pick one of the company's request types.
-2. confidence    — your honest certainty (0–1) about the domain + plan.
-3. departments   — only those genuinely required; give each a one-line mandate; set
+1. domain        - pick one of the company's request types.
+2. confidence    - your honest certainty (0-1) about the domain + plan.
+3. departments   - only those genuinely required; give each a one-line mandate; set
                    depends_on when one truly needs another's output first (otherwise leave
                    it empty so they run in PARALLEL).
-4. required_workers — exact worker names from the menu, ONLY the ones needed. No managers,
+4. required_workers - exact worker names from the menu, ONLY the ones needed. No managers,
                    no governance/reporter agents.
-5. hitl_points   — where a HUMAN must approve, with the specific authority and the reason,
+5. hitl_points   - where a HUMAN must approve, with the specific authority and the reason,
                    e.g. "CISO: production access for a contractor (SEC-04)",
                    "CFO: spend $95k exceeds director limit". Leave EMPTY when the request is
                    clearly within auto-approve limits and has no sensitive flag.
-6. deadline_days — use the company's SLA for the domain unless the request implies urgency.
-7. reasoning     — 2–4 tight sentences: why this domain, why these departments/workers, and
+6. deadline_days - use the company's SLA for the domain unless the request implies urgency.
+7. reasoning     - 2-4 tight sentences: why this domain, why these departments/workers, and
                    why these (or no) human approvals. Reference the actual thresholds/rules
                    you relied on. No filler.
 
@@ -71,7 +71,7 @@ Be decisive and concrete. Return ONLY the structured plan."""
 
 
 def _context_brief(ctx: CompanyContext) -> str:
-    depts = "\n".join(f"  - {d.key}: {d.name} — {d.responsibility}"
+    depts = "\n".join(f"  - {d.key}: {d.name} - {d.responsibility}"
                       for d in ctx.departments if d.enabled)
     menu = "\n".join(f"  - {c.name} [{c.department}/{c.level}]: {c.role}"
                      for c in ctx.capabilities if c.enabled)
@@ -80,7 +80,7 @@ def _context_brief(ctx: CompanyContext) -> str:
     return (
         f"COMPANY: {ctx.company.name} ({ctx.company.industry}, {ctx.company.size})\n\n"
         f"DEPARTMENTS:\n{depts}\n\n"
-        f"AVAILABLE WORKERS (the menu — use exact names):\n{menu}\n\n"
+        f"AVAILABLE WORKERS (the menu - use exact names):\n{menu}\n\n"
         f"REQUEST TYPES:\n{types}\n\n"
         f"SPEND THRESHOLDS: {json.dumps(ctx.thresholds.model_dump())}\n"
         f"SLA DEFAULTS (days): {json.dumps(ctx.sla_defaults)}\n"
@@ -102,13 +102,20 @@ _SCHEMA_HINT = """Return a JSON object with EXACTLY these fields:
   "gaps": []
 }
 
-EXTRACTED — fill the structured facts you parsed from the request:
+EXTRACTED - fill the structured facts you parsed from the request:
 - If domain is hr_onboarding:
     { "name": "...", "role": "...", "department": "hr|it|finance|sales|engineering",
       "seniority": "intern|junior|mid|senior|staff|exec",
       "employment_type": "full_time|contractor|intern", "remote": true|false,
       "location": "...", "handles_sensitive_data": true|false,
-      "access_scope": ["production" if mentioned, else empty] }
+      "access_scope": ["production" if mentioned, else empty],
+      // personal / payroll data - copy EXACTLY as written if present, else null:
+      "email": "...|null", "phone": "...|null", "date_of_birth": "...|null",
+      "nationality": "...|null", "national_id": "...|null", "tax_id_nif": "...|null",
+      "bank_rib": "...|null", "social_security_cnas": "...|null",
+      "marital_status": "...|null", "salary": "...|null", "contract_type": "...|null",
+      "start_date": "...|null" }
+  Do NOT invent these; only fill what the request actually states, verbatim.
 - If domain is procurement:
     { "vendor": "...", "item": "...", "amount": <number, no $ or commas>,
       "recurring": true|false, "is_data_processor": true|false, "has_dpa": true|false,
@@ -121,7 +128,7 @@ EXTRACTED — fill the structured facts you parsed from the request:
       "is_foreign": true|false, "po_number": "...|null" }
   amount_ttc is the total to pay. If only one amount is given, put it in amount_ttc.
 
-WORKER SELECTION RULES (critical — wrong workers give wrong results):
+WORKER SELECTION RULES (critical - wrong workers give wrong results):
 - hr_onboarding workers (ONLY these): docs_worker, benefits_worker, scheduler_worker,
   training_worker, accounts_worker, equipment_worker, access_worker, payroll_worker.
 - procurement workers (ONLY these): budget_worker, vendor_risk_worker.
@@ -147,11 +154,11 @@ def _plan_live(raw_text: str, ctx: CompanyContext, precedents: list | None = Non
         for p in precedents:
             if not p.get("summary"):
                 continue
-            line = f"- {p['summary']} → outcome: {p.get('outcome','?')}"
+            line = f"- {p['summary']} -> outcome: {p.get('outcome','?')}"
             if p.get("rule_id"):
                 line += f" (rule {p['rule_id']})"
             if p.get("lesson"):
-                line += f" — lesson: {p['lesson']}"
+                line += f" - lesson: {p['lesson']}"
             lines.append(line)
         if lines:
             precedent_block = (
@@ -266,7 +273,7 @@ def _plan_fallback(raw_text: str, ctx: CompanyContext) -> DispatchPlan:
                             required_workers=workers, hitl_points=hitl,
                             deadline_days=ctx.sla_defaults.get("procurement", 5),
                             reasoning="Fallback plan (LLM unavailable).")
-    # onboarding — include Finance when the hire is finance-related
+    # onboarding - include Finance when the hire is finance-related
     depts = [DeptMandate(department="hr", mandate="Documents, benefits, scheduling."),
              DeptMandate(department="it", mandate="Accounts, equipment, access.")]
     workers = ["docs_worker", "scheduler_worker", "accounts_worker", "equipment_worker",
@@ -306,7 +313,7 @@ def plan_request(raw_text: str, ctx: CompanyContext | None = None,
         return _plan_fallback(raw_text, ctx)
     try:
         return _plan_live(raw_text, ctx, precedents or [])
-    except Exception as exc:  # noqa: BLE001 — never crash the demo on an LLM hiccup
+    except Exception as exc:  # noqa: BLE001 - never crash the demo on an LLM hiccup
         plan = _plan_fallback(raw_text, ctx)
         plan.reasoning += f"  [fell back: {type(exc).__name__}: {exc}]"
         return plan

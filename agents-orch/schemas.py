@@ -1,18 +1,18 @@
 """
-schemas.py — the typed contracts for the whole system.
+schemas.py - the typed contracts for the whole system.
 
 Every object that crosses an agent, the gateway, or the frontend boundary is defined here.
 Agents never pass raw dicts; everything is a Pydantic model. This gives us: validated LLM
 output, a free frontend contract, and a free audit log.
 
 Grouped:
-    1. Requests        — what a user submits (HireRecord / PurchaseRequest)
-    2. Company context — what the Planner reads to orchestrate for a company
-    3. Planning        — the Planner's output (DispatchPlan)
-    4. Execution       — per-worker / per-department results
-    5. Governance      — Veto (block/halt) + Approval
-    6. Observability   — StepEvent (live) + AgentLog (persisted)
-    7. LLM config      — per-agent provider/model
+    1. Requests        - what a user submits (HireRecord / PurchaseRequest)
+    2. Company context - what the Planner reads to orchestrate for a company
+    3. Planning        - the Planner's output (DispatchPlan)
+    4. Execution       - per-worker / per-department results
+    5. Governance      - Veto (block/halt) + Approval
+    6. Observability   - StepEvent (live) + AgentLog (persisted)
+    7. LLM config      - per-agent provider/model
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ class HireRecord(BaseModel):
     location: str
     employment_type: EmploymentType
     remote: bool = False
-    handles_sensitive_data: bool = False        # PII / financial → Compliance + Security
+    handles_sensitive_data: bool = False        # PII / financial -> Compliance + Security
     access_scope: list[str] = Field(default_factory=list)  # e.g. ["email", "production"]
     start_date: Optional[date] = None
     manager_email: Optional[str] = None
@@ -127,7 +127,7 @@ class AgentSpec(BaseModel):
     output_schema: dict = Field(default_factory=dict)
     conditional_on: Optional[str] = None        # "request.amount > 50000"
     mode: Literal["react", "single", "rule"] = "single"
-    llm: Optional["LLMConfig"] = None           # None → system default
+    llm: Optional["LLMConfig"] = None           # None -> system default
     builtin: bool = True
     version: int = 1
     enabled: bool = True
@@ -146,7 +146,7 @@ class GovThresholds(BaseModel):
     manager_spend_limit: float = 50_000
     director_spend_limit: float = 100_000
     hard_spend_ceiling: float = 1_000_000
-    max_vendor_risk_score: float = 0.70         # above → escalate
+    max_vendor_risk_score: float = 0.70         # above -> escalate
 
 
 class HardRule(BaseModel):
@@ -192,7 +192,7 @@ class DeptMandate(BaseModel):
 
 
 class DispatchPlan(BaseModel):
-    """The Planner's decision — the dynamic team for this request."""
+    """The Planner's decision - the dynamic team for this request."""
     domain: Domain
     confidence: float = Field(ge=0.0, le=1.0)
     summary: str
@@ -202,7 +202,7 @@ class DispatchPlan(BaseModel):
     required_workers: list[str] = Field(default_factory=list)   # specific workers to run
     hitl_points: list[str] = Field(default_factory=list)        # where a human is required
     deadline_days: int = 7
-    reasoning: str = ""                         # shown to jury — proves it DECIDED
+    reasoning: str = ""                         # shown to jury - proves it DECIDED
     status: Literal["ready", "needs_capability"] = "ready"
     gaps: list[CapabilityGap] = Field(default_factory=list)
 
@@ -219,7 +219,7 @@ class Evidence(BaseModel):
 
 
 class Verdict(BaseModel):
-    """The structured output of a 'perfect' worker agent — a real specialist verdict."""
+    """The structured output of a 'perfect' worker agent - a real specialist verdict."""
     findings: str = ""                          # what the agent discovered
     analysis: str = ""                          # the agent's reasoning over the findings
     recommendation: str = ""                    # the concrete recommendation / action taken
@@ -257,9 +257,9 @@ class Veto(BaseModel):
     scope: Literal["block", "halt"]
     message: str
     explanation: str = ""                       # LLM-written (explain only, never decide)
-    owning_department: str                      # the dept whose work is frozen → alert its admin
+    owning_department: str                      # the dept whose work is frozen -> alert its admin
     blocked_worker: Optional[str] = None        # the specific step that triggered it
-    required_authority: str                     # "CISO" | "CFO" | "DPO"  → who can clear
+    required_authority: str                     # "CISO" | "CFO" | "DPO"  -> who can clear
     cleared_by: Optional[str] = None
     decision: Optional[Literal["release", "release_with_conditions", "deny"]] = None
     conditions: Optional[str] = None

@@ -1,9 +1,9 @@
 """
-graph.py — the REAL LangGraph orchestration.
+graph.py - the REAL LangGraph orchestration.
 
 A proper StateGraph wires the agents into a stateful flow with conditional routing:
 
-    START → planner → departments → governance → (FROZEN | approver) → reporter → END
+    START -> planner -> departments -> governance -> (FROZEN | approver) -> reporter -> END
                                           │
                                           └─ conditional edge: if a Veto is raised, route to
                                              the FROZEN terminal (no path to execution).
@@ -13,7 +13,7 @@ What is REAL here:
     - the Planner and workers reasoning with a live LLM (Gemini) unless MODE=demo
     - the governance enforcement (deterministic) and the un-bypassable freeze branch
 What is MOCKED:
-    - only the leaf tools (credit_check, grant_access, ...) — the external-system calls.
+    - only the leaf tools (credit_check, grant_access, ...) - the external-system calls.
       Everything orchestrating them is real.
 
 Run:
@@ -73,7 +73,7 @@ def node_planner(state: OrchState) -> OrchState:
     events = []
     if precedents:
         cites = "; ".join(
-            f"{p.get('summary','?')} → {p.get('outcome','?')}"
+            f"{p.get('summary','?')} -> {p.get('outcome','?')}"
             + (f" ({p['lesson']})" if p.get("lesson") else "")
             for p in precedents if p.get("summary"))
         if cites:
@@ -119,15 +119,20 @@ def node_governance(state: OrchState) -> OrchState:
     events = [_ev(state, "governance", "compliance_overseer", "system",
                   phase="Checking hard policy rules…", status="running")]
 
-    veto = gov.check_compliance(extracted, departments, _CTX) or gov.check_risk(extracted, _CTX)
+    veto = (gov.check_duplicate_employee(extracted)
+            or gov.check_compliance(extracted, departments, _CTX)
+            or gov.check_risk(extracted, _CTX))
 
     if veto:
+        # a duplicate identity is a hard rejection (denied); policy freezes await an authority
+        is_denied = veto.rule_id == "HR-DUP-01"
         events.append(_ev(state, "governance", veto.raised_by.lower() + "_overseer",
                           veto.owning_department,
-                          phase=f"{veto.scope.upper()} — {veto.rule_id}", status="blocked",
+                          phase=f"{'DENIED' if is_denied else veto.scope.upper()} - {veto.rule_id}",
+                          status="blocked",
                           output=veto.message, reasoning=veto.explanation,
                           policy_citation=veto.rule_id))
-        return {"veto": veto, "status": "frozen", "events": events}
+        return {"veto": veto, "status": "denied" if is_denied else "frozen", "events": events}
 
     events.append(_ev(state, "governance", "compliance_overseer", "system",
                       phase="No violations", status="done"))
@@ -137,21 +142,30 @@ def node_governance(state: OrchState) -> OrchState:
 
 def node_frozen(state: OrchState) -> OrchState:
     veto = state["veto"]
-    from tools.builtin import employee_directory
-    holders = employee_directory(authority=veto.required_authority).get("holders", [])
-    who = (f"{holders[0]['name']} ({holders[0]['role']}, {holders[0]['email']})"
-           if holders else veto.required_authority)
+    # a hard rejection (duplicate identity) is terminal - no authority can clear it
+    denied = veto.rule_id == "HR-DUP-01"
+    final_status = "denied" if denied else "frozen"
     report = build_report(
         run_id=state.get("run_id", "run"), company=_CTX.company.name,
         raw_text=state["raw_text"], plan=state["plan"],
         departments=state.get("departments", {}), veto=veto,
-        approvals=[], status="frozen",
+        approvals=[], status=final_status,
     )
-    return {"status": "frozen", "report": report["text"], "report_obj": report, "events": [
-        _ev(state, "governance", "system", veto.owning_department,
-            phase=f"Frozen — awaiting {veto.required_authority}", status="awaiting_human",
-            output=f"Alert routed to the {veto.owning_department.upper()} department admin. "
-                   f"Only {who} can clear this (rule {veto.rule_id})."),
+    if denied:
+        alert = _ev(state, "governance", "system", veto.owning_department,
+                    phase="Rejected - duplicate identity", status="blocked",
+                    output=veto.message)
+    else:
+        from tools.builtin import employee_directory
+        holders = employee_directory(authority=veto.required_authority).get("holders", [])
+        who = (f"{holders[0]['name']} ({holders[0]['role']}, {holders[0]['email']})"
+               if holders else veto.required_authority)
+        alert = _ev(state, "governance", "system", veto.owning_department,
+                    phase=f"Frozen - awaiting {veto.required_authority}", status="awaiting_human",
+                    output=f"Alert routed to the {veto.owning_department.upper()} department admin. "
+                           f"Only {who} can clear this (rule {veto.rule_id}).")
+    return {"status": final_status, "report": report["text"], "report_obj": report, "events": [
+        alert,
         _ev(state, "governance", "reporter", "system", phase="Report (frozen)",
             status="done", output=report["text"]),
     ]}
@@ -160,6 +174,9 @@ def node_frozen(state: OrchState) -> OrchState:
 def node_reporter(state: OrchState) -> OrchState:
     approvals = state.get("approvals", [])
     status = "awaiting_human" if approvals else "done"
+    # a clean, fully-approved onboarding actually creates the employee record
+    if status == "done":
+        _create_employee_record(state)
     report = build_report(
         run_id=state.get("run_id", "run"), company=_CTX.company.name,
         raw_text=state["raw_text"], plan=state["plan"],
@@ -170,6 +187,41 @@ def node_reporter(state: OrchState) -> OrchState:
         _ev(state, "governance", "reporter", "system", phase="Final report",
             status="done", output=report["text"])
     ]}
+
+
+def _create_employee_record(state: OrchState) -> None:
+    """Persist a new employee when an HR onboarding completes cleanly. This is what
+    the Employees dashboard page reads - proof the system actually onboarded the hire."""
+    e = state.get("extracted", {})
+    if e.get("domain") != "hr_onboarding" or not e.get("name"):
+        return
+    try:
+        import db as _db  # type: ignore
+        from sqlmodel import select, func
+        with _db.get_session() as s:
+            # next employee code: E### after the current max
+            count = s.exec(select(func.count()).select_from(_db.EmployeeRow)).one()
+            code = f"E{count + 1:03d}"
+            s.add(_db.EmployeeRow(
+                employee_code=code,
+                name=e.get("name"),
+                email=e.get("email"),
+                role=e.get("role"),
+                department=e.get("department"),
+                seniority=e.get("seniority"),
+                employment_type=e.get("employment_type"),
+                location=e.get("location"),
+                national_id=e.get("national_id"),
+                tax_id_nif=e.get("tax_id_nif"),
+                salary=e.get("salary"),
+                contract_type=e.get("contract_type"),
+                start_date=e.get("start_date"),
+                status="active",
+                source_run_id=state.get("run_id"),
+            ))
+            s.commit()
+    except Exception:  # noqa: BLE001 - record creation must never break the run
+        pass
 
 
 # ───────────────────────── conditional routing ─────────────────────────
@@ -204,12 +256,36 @@ GRAPH = build_graph()
 
 # ───────────────────────── helpers ─────────────────────────
 
+# small models sometimes copy the schema's "...|null" placeholder or echo the
+# field label ("NIF 987...") into a value; strip both so workers cite clean data.
+_PII_LABELS = re.compile(r"^(nif|nis|rc|ai|cni|cnas|rib|tax id|national id|chifa)\s*[:.]?\s*",
+                         re.IGNORECASE)
+
+
+def _clean_extracted_strings(e: dict) -> dict:
+    out = {}
+    for k, v in e.items():
+        if isinstance(v, str):
+            s = v.strip()
+            if s.endswith("|null"):
+                s = s[:-5].strip()
+            if s.lower() in ("null", "none", ""):
+                out[k] = None
+                continue
+            s = _PII_LABELS.sub("", s)
+            out[k] = s
+        else:
+            out[k] = v
+    return out
+
+
 def _normalize_extracted(plan: DispatchPlan, raw_text: str) -> dict:
     """Use the Planner's structured `extracted` as the source of truth; fill safe defaults
     and a regex-derived amount as a backstop. Always carries the domain so workers know
     whether they are handling a hire or a purchase.
     """
     e = dict(plan.extracted or {})
+    e = _clean_extracted_strings(e)
     e["domain"] = plan.domain
     e["raw"] = raw_text
     # expose the hire's name as `person` for the action tools (avoids the `name` collision)
@@ -217,11 +293,16 @@ def _normalize_extracted(plan: DispatchPlan, raw_text: str) -> dict:
         e["person"] = e["name"]
 
     # amount backstop (Planner usually fills it; regex covers any miss)
-    if not e.get("amount"):
-        m = re.search(r"\$?\s?([\d,]+(?:\.\d+)?)\s?(k|m)?", raw_text.lower())
-        if m and plan.domain == "procurement":
-            e["amount"] = float(m.group(1).replace(",", "")) * (
-                1_000 if m.group(2) == "k" else 1_000_000 if m.group(2) == "m" else 1)
+    if not e.get("amount") and plan.domain == "procurement":
+        # require at least one digit so a stray "$" or comma can't match empty
+        m = re.search(r"\$?\s?(\d[\d,]*(?:\.\d+)?)\s?(k|m)?", raw_text.lower())
+        if m:
+            num = m.group(1).replace(",", "")
+            try:
+                e["amount"] = float(num) * (
+                    1_000 if m.group(2) == "k" else 1_000_000 if m.group(2) == "m" else 1)
+            except ValueError:
+                pass  # not a parseable amount - leave it for the default below
     e.setdefault("amount", 0.0)
 
     if plan.domain == "hr_onboarding":
@@ -275,7 +356,7 @@ def _remember_run(run_id: str, raw_text: str, final: OrchState) -> None:
             lesson=(f"{veto.message}" if veto else ""),
         )
         memory.remember(rec)
-    except Exception:  # noqa: BLE001 — memory must never break a run
+    except Exception:  # noqa: BLE001 - memory must never break a run
         pass
 
 

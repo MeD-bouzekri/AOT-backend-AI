@@ -1,10 +1,10 @@
 """
-report.py — build the professional final report for a run.
+report.py - build the professional final report for a run.
 
 Produces a structured, complete report that covers every outcome:
     - header (request, domain, company, timestamp, final status)
     - the Planner's plan (departments, mandates, chosen team, reasoning)
-    - execution detail per department → per worker (what ran, tool, result, reasoning)
+    - execution detail per department -> per worker (what ran, tool, result, reasoning)
     - governance outcome: clean / FROZEN (block/halt) / pending human approval
     - for a freeze: the rule, the owning department alerted, the authority who must clear,
       and the resolution if cleared
@@ -135,7 +135,7 @@ def _readiness(status: str, departments: dict[str, DepartmentResult]) -> int:
 
 def _decision(status: str, veto: Veto | None, approvals: list[str]) -> str:
     if veto:
-        return f"BLOCKED ({veto.rule_id}) — awaiting {veto.required_authority}"
+        return f"BLOCKED ({veto.rule_id}) - awaiting {veto.required_authority}"
     if approvals:
         return "PENDING APPROVAL"
     if status == "denied":
@@ -148,7 +148,7 @@ def _decision(status: str, veto: Veto | None, approvals: list[str]) -> str:
 def render_text(r: dict) -> str:
     L = []
     L.append("=" * 68)
-    L.append(f"  {r['company'].upper()} — ORCHESTRAI EXECUTION REPORT")
+    L.append(f"  {r['company'].upper()} - ORCHESTRAI EXECUTION REPORT")
     L.append("=" * 68)
     L.append(f"Run ID      : {r['run_id']}")
     L.append(f"Generated   : {r['generated_at']}")
@@ -192,23 +192,23 @@ def render_text(r: dict) -> str:
     L.append("-" * 68)
     g = r["governance"]
     if g["outcome"] in ("BLOCK", "HALT"):
-        L.append(f"OUTCOME     : 🔴 {g['outcome']} — rule {g['rule_id']} "
+        L.append(f"OUTCOME     : 🔴 {g['outcome']} - rule {g['rule_id']} "
                  f"(raised by {g['raised_by']})")
         L.append(f"Reason      : {g['message']}")
         L.append(f"Explanation : {g['explanation']}")
-        L.append(f"Owning dept : {g['owning_department'].upper()} — {g['alerted_admin']} alerted")
+        L.append(f"Owning dept : {g['owning_department'].upper()} - {g['alerted_admin']} alerted")
         L.append(f"Clearable by: {g['must_be_cleared_by']} (authority: {g['required_authority']})")
         if g.get("cleared_by"):
-            L.append(f"Resolution  : cleared by {g['cleared_by']} — decision: {g['decision']}"
+            L.append(f"Resolution  : cleared by {g['cleared_by']} - decision: {g['decision']}"
                      + (f" ({g['conditions']})" if g.get("conditions") else ""))
         else:
-            L.append("Resolution  : PENDING — workflow frozen, the orchestrator cannot override.")
+            L.append("Resolution  : PENDING - workflow frozen, the orchestrator cannot override.")
     elif g["outcome"] == "AWAITING_APPROVAL":
         L.append("OUTCOME     : ⏸ awaiting human approval")
         for a in g.get("approvals", []):
             L.append(f"   - {a}")
     else:
-        L.append("OUTCOME     : ✅ clean — no policy violations.")
+        L.append("OUTCOME     : ✅ clean - no policy violations.")
     L.append("")
 
     L.append("-" * 68)

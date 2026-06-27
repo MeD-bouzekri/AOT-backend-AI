@@ -10,11 +10,13 @@
     "employment_type": "full_time",
     "location": "Algiers HQ",
     "remote": false,
+    "national_id": "100000000001",
     "authority": { "can_approve": ["procurement", "hr_onboarding"], "approve_limit": 100000000, "can_clear_veto": ["CISO", "CFO", "DPO"] }
   },
   {
     "employee_code": "E002",
     "name": "Mohamed Bouzekri",
+    "national_id": "100000000002",
     "email": "mohamed.bouzekri@numidia.ia",
     "role": "CFO",
     "department": "finance",

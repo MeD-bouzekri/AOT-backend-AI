@@ -1,11 +1,11 @@
 """
-governance.py — the system gate (overseers), AEGIS-style.
+governance.py - the system gate (overseers), AEGIS-style.
 
 Two deterministic overseers run automatically AFTER the departments and BEFORE execution:
-    compliance_overseer → checks hard rules → may raise a BLOCK (per-request veto)
-    risk_overseer       → checks spend ceilings → may raise a HALT (whole run)
+    compliance_overseer -> checks hard rules -> may raise a BLOCK (per-request veto)
+    risk_overseer       -> checks spend ceilings -> may raise a HALT (whole run)
 
-The decision is DETERMINISTIC (rules + numbers), never an LLM — reliable and defensible.
+The decision is DETERMINISTIC (rules + numbers), never an LLM - reliable and defensible.
 An LLM may later *explain* a veto, but never decide it. A veto names the owning department
 (so its admin is alerted) and the authority that can clear it (CISO/CFO/DPO).
 
@@ -21,7 +21,7 @@ from schemas import (
 )
 
 
-# which worker/step a rule is "about" → which department owns the freeze
+# which worker/step a rule is "about" -> which department owns the freeze
 _RULE_OWNER = {
     "SEC-04": ("it", "access_worker"),
     "PROC-07": ("finance", "vendor_risk_worker"),
@@ -54,6 +54,37 @@ def check_compliance(
                 owning_department=owner_dept, blocked_worker=worker,
                 required_authority=rule.required_authority,
             )
+    return None
+
+
+def check_duplicate_employee(extracted: dict) -> Veto | None:
+    """Reject an onboarding whose National ID (NIN/CNI) already exists in the
+    employee directory. A duplicate identity is a hard data conflict - denied,
+    not a clearable freeze."""
+    if extracted.get("domain") != "hr_onboarding":
+        return None
+    nin = (extracted.get("national_id") or "").strip()
+    if not nin:
+        return None
+    try:
+        import db as _db  # type: ignore
+        from sqlmodel import select
+        with _db.get_session() as s:
+            existing = s.exec(
+                select(_db.EmployeeRow).where(_db.EmployeeRow.national_id == nin)
+            ).first()
+    except Exception:  # noqa: BLE001 - never crash a run on a lookup
+        return None
+    if existing:
+        return Veto(
+            raised_by="Compliance", rule_id="HR-DUP-01", scope="block",
+            message=f"National ID {nin} already belongs to {existing.name} "
+                    f"({existing.employee_code}). Duplicate identity - onboarding rejected.",
+            explanation="An employee with this National ID is already in the directory. "
+                        "A duplicate national identity cannot be onboarded.",
+            owning_department="hr", blocked_worker="docs_worker",
+            required_authority="HR",
+        )
     return None
 
 

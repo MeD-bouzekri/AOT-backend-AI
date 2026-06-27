@@ -1,10 +1,10 @@
 """
-runner.py — call any tool by name, built-in OR user-built.
+runner.py - call any tool by name, built-in OR user-built.
 
-Built-in tools  → real Python functions in builtin.BUILTIN_TOOLS.
-User-built tools → config (ToolSpec) with a `mock_response` template. The runner returns the
+Built-in tools  -> real Python functions in builtin.BUILTIN_TOOLS.
+User-built tools -> config (ToolSpec) with a `mock_response` template. The runner returns the
                    template, optionally filled with the call args. NO code is generated or
-                   executed for user-built tools — this is the safe, declarative path that
+                   executed for user-built tools - this is the safe, declarative path that
                    makes the dashboard "create a tool" feature possible.
 
 The user-tool registry is loaded from data/registry_tools.json (created via the dashboard);
@@ -53,7 +53,7 @@ def call_tool(tool_name: str, /, **kwargs: Any) -> dict:
     if fn is not None:
         try:
             return fn(**kwargs)
-        except Exception as exc:  # noqa: BLE001 — a tool error must not crash the run
+        except Exception as exc:  # noqa: BLE001 - a tool error must not crash the run
             return {"status": "error", "tool": name, "detail": str(exc)}
 
     # 2) user-built (declarative mock, no code execution)

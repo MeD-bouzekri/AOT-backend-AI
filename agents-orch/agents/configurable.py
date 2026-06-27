@@ -1,15 +1,15 @@
 """
-configurable.py — ONE generic agent node that runs ANY worker from its AgentSpec.
+configurable.py - ONE generic agent node that runs ANY worker from its AgentSpec.
 
 This is the core of the "agents as data" design (REGISTRY.md). Instead of 9 hand-written
 worker classes, we have one runner parameterized by config:
-    - spec.tools        → which tools it may call
-    - spec.role/prompt  → how it reasons
-    - spec.mode         → "rule" (deterministic, no LLM), "single" (one LLM call),
-                          "react" (capped reason→tool→observe loop)
+    - spec.tools        -> which tools it may call
+    - spec.role/prompt  -> how it reasons
+    - spec.mode         -> "rule" (deterministic, no LLM), "single" (one LLM call),
+                          "react" (capped reason->tool->observe loop)
 
 Every run produces a WorkerResult and (when wired into the graph) a StepEvent. A built or a
-built-in worker is the SAME object here — only the config differs, which is exactly why the
+built-in worker is the SAME object here - only the config differs, which is exactly why the
 dashboard "create a worker" feature is nearly free.
 """
 
@@ -37,7 +37,7 @@ def run_worker(spec: AgentSpec, context: dict) -> WorkerResult:
 # ───────────────────────── rule mode (deterministic, no LLM) ─────────────────────────
 
 def _run_rule(spec: AgentSpec, context: dict) -> WorkerResult:
-    """Call the worker's tools with the context and summarize — no LLM, instant, reliable."""
+    """Call the worker's tools with the context and summarize - no LLM, instant, reliable."""
     tool_outputs = {}
     for tool in spec.tools:
         tool_outputs[tool] = call_tool(tool, **context)
@@ -71,15 +71,18 @@ def _run_single(spec: AgentSpec, context: dict) -> WorkerResult:
         f"You are the {spec.name} in the {spec.department.upper()} department. "
         f"Role: {spec.role}\n"
         f"{_domain_note(context)}\n"
+        f"{_pii_note(spec, context)}"
         f"Request facts: {json.dumps(_safe(context))}\n"
         f"Tool results: {json.dumps(_safe(tool_outputs))}\n\n"
         f"In 1-2 sentences, state what you did for THIS request and the outcome. Be concrete "
-        f"and stay strictly within your role; do not invent facts not present above."
+        f"and stay strictly within your role; do not invent facts not present above. "
+        f"When the request provides specific identifiers relevant to your role (salary, RIB, "
+        f"NIF, CNAS, national ID, email), cite the EXACT values you used."
     )
     try:
         resp = llm.invoke(prompt)
         text = resp.content if hasattr(resp, "content") else str(resp)
-    except Exception as exc:  # noqa: BLE001 — fall back, never crash
+    except Exception as exc:  # noqa: BLE001 - fall back, never crash
         text = _summarize_tools(tool_outputs) + f"  [llm fallback: {exc}]"
     return WorkerResult(
         worker=spec.name, department=spec.department,
@@ -91,7 +94,7 @@ def _run_single(spec: AgentSpec, context: dict) -> WorkerResult:
 # ───────────────────────── react mode (capped tool loop) ─────────────────────────
 
 def _run_react(spec: AgentSpec, context: dict) -> WorkerResult:
-    """Bounded reason→tool→observe loop. Capped at REACT_MAX_STEPS to stay fast + safe."""
+    """Bounded reason->tool->observe loop. Capped at REACT_MAX_STEPS to stay fast + safe."""
     collected = {}
     # demo / no-LLM: just call all tools once in sequence
     if is_demo():
@@ -150,6 +153,30 @@ def _run_react(spec: AgentSpec, context: dict) -> WorkerResult:
 
 
 # ───────────────────────── helpers ─────────────────────────
+
+# which personal/payroll fields each HR worker should cite when present
+_WORKER_PII = {
+    "payroll_worker": ["salary", "bank_rib", "social_security_cnas", "tax_id_nif",
+                       "contract_type", "marital_status"],
+    "docs_worker": ["national_id", "tax_id_nif", "nationality", "contract_type",
+                    "start_date", "email"],
+    "accounts_worker": ["email", "name"],
+    "benefits_worker": ["social_security_cnas", "marital_status", "employment_type"],
+}
+
+
+def _pii_note(spec, context: dict) -> str:
+    """Surface the specific identifiers this worker is expected to use, so the LLM
+    cites the real values from the request instead of staying generic."""
+    fields = _WORKER_PII.get(spec.name)
+    if not fields:
+        return ""
+    present = {f: context.get(f) for f in fields if context.get(f)}
+    if not present:
+        return ""
+    kv = "; ".join(f"{k}={v}" for k, v in present.items())
+    return f"Relevant employee data to act on (use these exact values): {kv}\n"
+
 
 def _domain_note(context: dict) -> str:
     domain = context.get("domain")

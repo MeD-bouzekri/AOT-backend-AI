@@ -1,12 +1,12 @@
 """
-memory.py — Institutional Memory (the "learns over time" feature).
+memory.py - Institutional Memory (the "learns over time" feature).
 
 Stores a compact record of every completed run and lets the Planner retrieve similar past
 cases to make wiser decisions ("last time a contractor asked for prod access, Security
 blocked it"; "this vendor split invoices before").
 
 Design avoids heavy local embedding models (which caused MemoryError via torch/onnx):
-    - PRIMARY: Chroma with Gemini embeddings (cloud — no local model, no torch).
+    - PRIMARY: Chroma with Gemini embeddings (cloud - no local model, no torch).
     - FALLBACK: a JSON store with keyword/overlap similarity (zero deps, always works).
 
 Public API:

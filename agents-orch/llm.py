@@ -1,14 +1,14 @@
 """
-llm.py — the LLM factory.
+llm.py - the LLM factory.
 
 One factory turns any LLMConfig into a unified chat model. Three providers:
-    claude  → langchain_anthropic.ChatAnthropic   (default)
-    gemini  → langchain_google_genai.ChatGoogleGenerativeAI
-    ollama  → langchain_ollama.ChatOllama          (local/self-hosted)
+    claude  -> langchain_anthropic.ChatAnthropic   (default)
+    gemini  -> langchain_google_genai.ChatGoogleGenerativeAI
+    ollama  -> langchain_ollama.ChatOllama          (local/self-hosted)
 
 Agent code never changes; only the config. Plus:
-    - MODE=demo  → agents short-circuit to canned outputs (zero cost, zero flake on stage)
-    - validate_ollama() → check a URL + that the model exists, before saving a config
+    - MODE=demo  -> agents short-circuit to canned outputs (zero cost, zero flake on stage)
+    - validate_ollama() -> check a URL + that the model exists, before saving a config
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ from schemas import LLMConfig, OllamaValidation
 
 MODE = os.getenv("MODE", "demo").lower()        # "demo" | "live"
 
-# Ollama is the default brain — local/self-hosted, so sensitive data never leaves the
+# Ollama is the default brain - local/self-hosted, so sensitive data never leaves the
 # company. The admin sets the server URL and model name (per agent, or these defaults).
 _OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 _PLANNER_MODEL = os.getenv("PLANNER_MODEL", "llama3.1:8b")
@@ -52,7 +52,7 @@ def _company_default_llm() -> Optional[dict]:
     """Read the admin-saved default LLM from company_config.json, if any.
 
     Set via PUT /api/settings/default-llm (validated against the server's
-    /api/tags before saving). Returns None when unset → callers fall back to
+    /api/tags before saving). Returns None when unset -> callers fall back to
     the env-driven DEFAULT_*_LLM above.
     """
     import json
@@ -63,7 +63,7 @@ def _company_default_llm() -> Optional[dict]:
         dl = cfg.get("default_llm")
         if dl and dl.get("base_url") and dl.get("model"):
             return dl
-    except Exception:  # noqa: BLE001 — never let config IO break a run
+    except Exception:  # noqa: BLE001 - never let config IO break a run
         pass
     return None
 

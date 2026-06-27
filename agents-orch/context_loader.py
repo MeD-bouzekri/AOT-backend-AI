@@ -1,5 +1,5 @@
 """
-context_loader.py — assemble the CompanyContext the Planner reads.
+context_loader.py - assemble the CompanyContext the Planner reads.
 
 For the demo, the company's setup lives in JSON fixtures (data/). In production this comes
 from the DB tables filled by the setup wizard. Either way the Planner only ever sees a

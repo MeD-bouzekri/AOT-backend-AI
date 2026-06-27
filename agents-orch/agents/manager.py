@@ -1,5 +1,5 @@
 """
-manager.py — department manager (Level 2 supervisor).
+manager.py - department manager (Level 2 supervisor).
 
 A manager receives its mandate from the Planner, runs the workers the plan assigned to its
 department, and synthesizes a DepartmentResult. Workers run through the generic

@@ -27,6 +27,16 @@ Orchestra turns a plain-language enterprise request — *"onboard a contractor"*
 
 The engine is a real **LangGraph `StateGraph`** with conditional routing and shared typed state. A vetoed run routes **only** to the frozen terminal — there is no graph edge from a freeze to execution.
 
+### Live Workflow Graph
+
+Every run is reconstructable as an interactive node graph (planner → managers → workers → governance → reporter), so a reviewer can trace exactly how a decision was reached.
+
+<div align="center">
+
+<img src="graph.png" alt="Live workflow graph of a run" width="820" />
+
+</div>
+
 ## How It Works
 
 | Stage | What happens |

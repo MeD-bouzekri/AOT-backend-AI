@@ -1,15 +1,15 @@
 """
-orchestrator.py — run a request end to end.
+orchestrator.py - run a request end to end.
 
 Flow:
-    1. Planner    → DispatchPlan (domain, departments, workers, hitl)
-    2. Departments→ each manager runs its assigned workers (the demo runs them in turn;
+    1. Planner    -> DispatchPlan (domain, departments, workers, hitl)
+    2. Departments-> each manager runs its assigned workers (the demo runs them in turn;
                     independent departments are logically parallel)
-    3. Governance → compliance + risk overseers (deterministic). May raise a Veto (freeze).
-    4. Freeze?    → run halts; alert routes to the owning department; only the named
+    3. Governance -> compliance + risk overseers (deterministic). May raise a Veto (freeze).
+    4. Freeze?    -> run halts; alert routes to the owning department; only the named
                     authority can clear (clear_veto). No path to execution while active.
-    5. Approver   → threshold-based human approvals (HITL), if any.
-    6. Reporter   → final report + readiness/decision + audit.
+    5. Approver   -> threshold-based human approvals (HITL), if any.
+    6. Reporter   -> final report + readiness/decision + audit.
 
 Every step emits a StepEvent (live dashboard) and is collected for the audit log. This file
 is framework-light on purpose; a LangGraph StateGraph can wrap these same functions later
@@ -79,7 +79,7 @@ def run_request(
         _emit("manager", f"{dept}_manager", dept,
               phase=f"Assigning {len(wnames)} task(s)…", status="running")
 
-        def mgr_emit(d):  # bridge manager's dict callback → StepEvent
+        def mgr_emit(d):  # bridge manager's dict callback -> StepEvent
             _emit(d.get("level", "worker"), d["agent"], d["department"],
                   assigned_by=d.get("assigned_by"), phase=d.get("phase", ""),
                   status=d.get("status", "done"), output=d.get("output"),
@@ -100,12 +100,12 @@ def run_request(
         result.veto = veto
         result.status = "frozen"
         _emit("governance", veto.raised_by.lower() + "_overseer", veto.owning_department,
-              phase=f"{veto.scope.upper()} — {veto.rule_id}", status="blocked",
+              phase=f"{veto.scope.upper()} - {veto.rule_id}", status="blocked",
               output=veto.message, reasoning=veto.explanation,
               policy_citation=veto.rule_id)
         # 4. Freeze: alert owning department, await authority. Stop here.
         _emit("governance", "system", veto.owning_department,
-              phase=f"Frozen — awaiting {veto.required_authority}", status="awaiting_human",
+              phase=f"Frozen - awaiting {veto.required_authority}", status="awaiting_human",
               output=f"Alert sent to {veto.owning_department} admin. "
                      f"Only {veto.required_authority} can clear.")
         return result
@@ -197,7 +197,7 @@ def _build_report(plan, result: RunResult, approvals: list[str]) -> str:
              f"Departments: {', '.join(d.department for d in plan.departments)}"]
     for dept, dr in result.departments.items():
         lines.append(f"  [{dept}] {len(dr.workers)} task(s): "
-                     + "; ".join(f"{w.worker}→{w.status}" for w in dr.workers))
+                     + "; ".join(f"{w.worker}->{w.status}" for w in dr.workers))
     if approvals:
         lines.append("Pending approvals: " + "; ".join(approvals))
     lines.append("Outcome: " + result.status)
@@ -220,7 +220,7 @@ if __name__ == "__main__":
             tag = f"[{ev.department}/{ev.level}] {ev.agent}: {ev.phase} ({ev.status})"
             print(" ", tag)
             if ev.output:
-                print("       →", ev.output[:100])
+                print("       ->", ev.output[:100])
         print("STATUS:", res.status)
         if res.veto:
             print(f"FROZEN: {res.veto.rule_id} owner={res.veto.owning_department} "

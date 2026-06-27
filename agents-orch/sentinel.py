@@ -1,5 +1,5 @@
 """
-sentinel.py — Proactive Sentinel.
+sentinel.py - Proactive Sentinel.
 
 Unlike the per-request overseers, the Sentinel scans ACROSS recent activity to surface risks
 before they escalate. It answers "what should a human worry about right now?" for the
@@ -81,7 +81,7 @@ def scan() -> dict:
             alerts.append({
                 "severity": "high", "type": "split_invoices",
                 "message": f"{v} submitted {cnt} invoices recently "
-                           f"({', '.join(f'{a:,.0f}' for a in amts)} DZD) — possible split "
+                           f"({', '.join(f'{a:,.0f}' for a in amts)} DZD) - possible split "
                            f"to stay under approval thresholds.",
                 "recommendation": "Consolidate and route to compliance review.",
             })
@@ -106,7 +106,7 @@ def scan() -> dict:
     if frozen >= 3:
         alerts.append({
             "severity": "medium", "type": "governance_pattern",
-            "message": f"{frozen} workflows were frozen recently — a recurring policy gap "
+            "message": f"{frozen} workflows were frozen recently - a recurring policy gap "
                        f"may need attention.",
             "recommendation": "Review the most-triggered rules with the policy owners.",
         })

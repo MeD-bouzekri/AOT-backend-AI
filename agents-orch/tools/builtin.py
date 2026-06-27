@@ -1,16 +1,16 @@
 """
-builtin.py — the 18 built-in tools (mock-backed for the demo).
+builtin.py - the 18 built-in tools (mock-backed for the demo).
 
 Two kinds of tools the system uses:
-    DATA tools   — read company "truth" (catalogs, directory, risk lookups). Return dicts.
-    ACTION tools — perform a side effect (create account, grant access...). Return
+    DATA tools   - read company "truth" (catalogs, directory, risk lookups). Return dicts.
+    ACTION tools - perform a side effect (create account, grant access...). Return
                    {status, ref_id, detail}.
 
 All are MOCK: they return realistic data without touching real SaaS. To go live later,
-swap a function body for a real API call — the agents and graph never change.
+swap a function body for a real API call - the agents and graph never change.
 
 User-built tools (created by an admin in the dashboard) are NOT here; they are config with a
-`mock_response` template, run by tools/runner.py. No code execution for those — safe.
+`mock_response` template, run by tools/runner.py. No code execution for those - safe.
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ def _ref(prefix: str) -> str:
 
 
 # ───────────────────────── company config (admin-provided data) ─────────────────────────
-# All company-specific policy lives in data/company_config.json — filled by the admin in the
+# All company-specific policy lives in data/company_config.json - filled by the admin in the
 # setup wizard. Tools READ it; nothing is hardcoded. A different company ships a different
 # file and the agents behave differently with zero code change.
 
@@ -152,7 +152,7 @@ def invoice_validator(supplier_nif: str = "", supplier_nis: str = "", supplier_r
     """Validate an Algerian invoice per Décret exécutif 05-468 + Loi de Finances 2022.
 
     Mandatory identifiers: NIF + NIS + RC + AI (supplier) and customer NIF.
-    Fiscal stamp (timbre fiscal) is required ONLY for cash payments (1%, 5–2500 DZD).
+    Fiscal stamp (timbre fiscal) is required ONLY for cash payments (1%, 5-2500 DZD).
     """
     rules = _algeria()
     tax = rules["tax_rules"]
@@ -178,7 +178,7 @@ def invoice_validator(supplier_nif: str = "", supplier_nis: str = "", supplier_r
             missing.append("fiscal_stamp")
         expected_stamp = min(max(amount_ttc * tax["fiscal_stamp_rate_percent"] / 100,
                                  tax["fiscal_stamp_min_dzd"]), tax["fiscal_stamp_max_dzd"])
-        stamp_note = f"cash payment → 1% stamp ≈ {expected_stamp:,.0f} DZD (bounded 5–2500)"
+        stamp_note = f"cash payment -> 1% stamp ≈ {expected_stamp:,.0f} DZD (bounded 5-2500)"
 
     # VAT verification (rate 19 or 9)
     rate = vat_rate if vat_rate in (tax["vat_rate_standard"], tax["vat_rate_reduced"]) else tax["vat_rate_standard"]
@@ -406,7 +406,7 @@ def order_equipment(person: str = "", seniority: str = "mid", remote: bool = Fal
     pkg = equipment_catalog(seniority=seniority, remote=remote)
     who = person or "the new hire"
     return {"status": "ordered", "ref_id": _ref("EQ"),
-            "detail": f"Ordered {pkg['equipment'][0]} for {who} — {pkg['delivery']}."}
+            "detail": f"Ordered {pkg['equipment'][0]} for {who} - {pkg['delivery']}."}
 
 
 def grant_access(person: str = "", access_scope: list | None = None, **_) -> dict:
@@ -416,12 +416,29 @@ def grant_access(person: str = "", access_scope: list | None = None, **_) -> dic
             "detail": f"Granted {', '.join(scope)} access to {who}."}
 
 
-def payroll_system(person: str = "", employment_type: str = "full_time",
-                   action: str = "setup", amount: float = 0.0, **_) -> dict:
-    who = person or "the new hire"
+def payroll_system(person: str = "", name: str = "", employment_type: str = "full_time",
+                   action: str = "setup", amount: float = 0.0,
+                   salary: str = "", bank_rib: str = "", social_security_cnas: str = "",
+                   tax_id_nif: str = "", contract_type: str = "", **_) -> dict:
+    who = person or name or "the new hire"
     kind = "contractor payment profile" if employment_type == "contractor" else "payroll & tax profile"
+    # echo the real identifiers the request provided, so the profile is concrete
+    parts = []
+    if salary:
+        parts.append(f"salary {salary}")
+    elif amount:
+        parts.append(f"${amount:,.0f}")
+    if contract_type:
+        parts.append(f"contract {contract_type}")
+    if bank_rib:
+        parts.append(f"RIB {bank_rib}")
+    if social_security_cnas:
+        parts.append(f"CNAS {social_security_cnas}")
+    if tax_id_nif:
+        parts.append(f"NIF {tax_id_nif}")
+    extra = (" - " + ", ".join(parts)) if parts else ""
     return {"status": "done", "ref_id": _ref("PAY"),
-            "detail": f"Set up {kind} for {who}" + (f" (${amount:,.0f})" if amount else "") + "."}
+            "detail": f"Set up {kind} for {who}{extra}."}
 
 
 # ───────────────────────── registry ─────────────────────────

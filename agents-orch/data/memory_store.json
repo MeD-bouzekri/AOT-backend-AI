@@ -87,5 +87,192 @@
     "department": null,
     "lesson": "",
     "ts": "2026-06-27T05:46:12+00:00"
+  },
+  {
+    "run_id": "run-d20f022182",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Boudiaf as a Senior Software Engineer in Algiers with full IT access and payroll setup.",
+    "request": "\"Please onboard our new hire: Karim Boudiaf, 29 years old, as Senior Software Engineer in the Engineering department. He will start on July 20, 2026, in our Algiers office (Hydra). He is Algerian, married with one child. Create a CDI contract with 3-month probation. Salary: 185,000 DZD net per month. He needs full IT access, laptop, and company email.\"\n\nEmployee Personal Data (Used by the System)\n\nFull Name: Karim Boudiaf\nDate of Birth: 15 March 1997 (29 years old)\nNationality: Algerian\nNational ID (Carte Nationale d\u2019Identit\u00e9): 123456789012\nNIF (Tax ID): 987654321\nAddress: Lotissement Les Pins, Villa N\u00b0 47, Hydra, Algiers, Algeria\nPhone Number: +213 5 55 12 34 56\nEmail: karim.boudiaf@gmail.com\nBank Account (RIB): 12345 67890 1234567890 12 (Bank of Algeria)\nSocial Security (CNAS / Chifa Card): 987654321098\nFamily Situation: Married, 1 child (for family allowances)\nEducation: Master\u2019s in Computer Science from USTHB Algiers\nPrevious Experience: 6 years at Algiers Tech Solutions",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T07:22:19+00:00"
+  },
+  {
+    "run_id": "demo-1",
+    "domain": "hr_onboarding",
+    "summary": "Onboard new hire Karim Boudiaf as a Senior Software Engineer in Algiers.",
+    "request": "Please onboard our new hire: Karim Boudiaf, 29 years old, as Senior Software Engineer in the Engineering department. He will start on July 20, 2026, in our Algiers office (Hydra). He is Algerian, married with one child. Create a CDI contract with 3-month probation. Salary: 185,000 DZD net per month. He needs full IT access, laptop, and company email. Full Name: Karim Boudiaf. DOB: 15 March 1997. Nationality: Algerian. National ID (CNI): 123456789012. NIF: 987654321. Address: Lotissement Les Pins, Villa 47, Hydra, Algiers. Phone: +213 5 55 12 34 56. Email: karim.boudiaf@gmail.com. RIB: 12345 67890 1234567890 12. CNAS/Chifa: 987654321098. Married, 1 child. Master in CS from USTHB Algiers. 6 years at Algiers Tech Solutions.",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T07:40:23+00:00"
+  },
+  {
+    "run_id": "demo-2",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Yacine Belkacem as a contractor software engineer for remote work in Oran.",
+    "request": "Onboard Yacine Belkacem, a contractor software engineer, remote from Oran, on a 6-month mission. He needs production database access to our payment systems. Salary 220,000 DZD/month.",
+    "outcome": "frozen",
+    "rule_id": "SEC-04",
+    "department": "it",
+    "lesson": "Contractor is requesting production access. Blocked pending security review.",
+    "ts": "2026-06-27T07:41:18+00:00"
+  },
+  {
+    "run_id": "demo-3",
+    "domain": "invoice_ap",
+    "summary": "Validate and approve supplier invoice for office equipment.",
+    "request": "Validate and approve this supplier invoice from Soci\u00e9t\u00e9 Numidia Distribution for office equipment, total 850,000 DZD TTC, paid in cash. The invoice has no NIF, no NIS, no RC, and no fiscal stamp.",
+    "outcome": "frozen",
+    "rule_id": "DZ-INV-01",
+    "department": "finance",
+    "lesson": "Invoice is missing mandatory legal fields (NIF / fiscal stamp). Cannot be processed under Algerian tax law.",
+    "ts": "2026-06-27T07:41:52+00:00"
+  },
+  {
+    "run_id": "demo-4",
+    "domain": "procurement",
+    "summary": "Approve a purchase of enterprise servers from an Algiers vendor.",
+    "request": "Approve a 300,000,000 DZD purchase of enterprise servers from a vendor in Algiers for the new Sidi Abdellah data center.",
+    "outcome": "frozen",
+    "rule_id": "FIN-12",
+    "department": "finance",
+    "lesson": "Spend $300,000,000 exceeds the hard ceiling $1,000,000.",
+    "ts": "2026-06-27T07:42:20+00:00"
+  },
+  {
+    "run_id": "demo-5",
+    "domain": "procurement",
+    "summary": "Approve SaaS subscription for CRM storing Algerian customers' personal data.",
+    "request": "Approve a 12,000,000 DZD annual SaaS subscription for a CRM that stores our Algerian customers' personal data. The vendor processes personal data and there is no DPA signed.",
+    "outcome": "frozen",
+    "rule_id": "PROC-07",
+    "department": "finance",
+    "lesson": "Vendor processes personal data but no Data Processing Agreement is on file.",
+    "ts": "2026-06-27T07:42:49+00:00"
+  },
+  {
+    "run_id": "demo-6",
+    "domain": "procurement",
+    "summary": "Organize national TV advertising campaign procurement.",
+    "request": "Organize and run a national television advertising campaign in Algeria: hire actors, rent a film studio in Algiers, and book prime-time slots on ENTV.",
+    "outcome": "awaiting_human",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T07:43:18+00:00"
+  },
+  {
+    "run_id": "karim-clean",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Boudiaf as a Senior Software Engineer in Algiers.",
+    "request": "Onboard Karim Boudiaf as Senior Software Engineer, full-time CDI, Algiers (Hydra), start 2026-07-20, Algerian, married 1 child. Salary 185,000 DZD net. Needs full IT access, laptop, company email. NIF 987654321, CNI 123456789012, email karim.boudiaf@gmail.com.",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T07:48:53+00:00"
+  },
+  {
+    "run_id": "run-5fc4a43875",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Boudiaf as a Senior Software Engineer in Algiers with full IT access and payroll setup.",
+    "request": "\"Please onboard our new hire: Karim Boudiaf, 29 years old, as Senior Software Engineer in the Engineering department. He will start on July 20, 2026, in our Algiers office (Hydra). He is Algerian, married with one child. Create a CDI contract with 3-month probation. Salary: 185,000 DZD net per month. He needs full IT access, laptop, and company email.\"\n\nEmployee Personal Data (Used by the System)\n\nFull Name: Karim Boudiaf\nDate of Birth: 15 March 1997 (29 years old)\nNationality: Algerian\nNational ID (Carte Nationale d\u2019Identit\u00e9): 123456789012\nNIF (Tax ID): 987654321\nAddress: Lotissement Les Pins, Villa N\u00b0 47, Hydra, Algiers, Algeria\nPhone Number: +213 5 55 12 34 56\nEmail: karim.boudiaf@gmail.com\nBank Account (RIB): 12345 67890 1234567890 12 (Bank of Algeria)\nSocial Security (CNAS / Chifa Card): 987654321098\nFamily Situation: Married, 1 child (for family allowances)\nEducation: Master\u2019s in Computer Science from USTHB Algiers\nPrevious Experience: 6 years at Algiers Tech Solutions",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T08:25:56+00:00"
+  },
+  {
+    "run_id": "run-93fcb1ebd5",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Boudiaf as a Senior Software Engineer in the Algiers office with full IT access and payroll setup.",
+    "request": "\"Please onboard our new hire: Karim Boudiaf, 29 years old, as Senior Software Engineer in the Engineering department. He will start on July 20, 2026, in our Algiers office (Hydra). He is Algerian, married with one child. Create a CDD contract with 3-month probation. Salary: 185,000 DZD net per month. He needs full IT access, laptop, and company email.\"\n\nEmployee Personal Data :\n\nFull Name: Karim Boudiaf\nDate of Birth: 15 March 1997 (29 years old)\nNationality: Algerian\nNational ID (Carte Nationale d\u2019Identit\u00e9): 123456789012\nNIF (Tax ID): 987654321\nAddress: Lotissement Les Pins, Villa N\u00b0 47, Hydra, Algiers, Algeria\nPhone Number: +213 5 55 12 34 56\nEmail: karim.boudiaf@gmail.com\nBank Account (RIB): 12345 67890 1234567890 12 (Bank of Algeria)\nSocial Security (CNAS / Chifa Card): 987654321098\nFamily Situation: Married, 1 child (for family allowances)\nEducation: Master\u2019s in Computer Science from USTHB Algiers\nPrevious Experience: 6 years at Algiers Tech Solutions",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T08:33:18+00:00"
+  },
+  {
+    "run_id": "extract-check",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Boudiaf as a Senior Software Engineer in Algiers Hydra.",
+    "request": "Onboard Karim Boudiaf as Senior Software Engineer, full-time CDI, Algiers Hydra, start 2026-07-20, Algerian, married 1 child. Salary 185000 DZD net. NIF 987654321, CNI 123456789012, RIB 12345678901234567890, CNAS 987654321098, email karim.boudiaf@gmail.com, phone +213555123456.",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T08:40:23+00:00"
+  },
+  {
+    "run_id": "pii-check",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Boudiaf as a Senior Software Engineer in Algiers Hydra.",
+    "request": "Onboard Karim Boudiaf as Senior Software Engineer, full-time CDI contract, Algiers Hydra, start 2026-07-20, Algerian, married 1 child. Salary 185,000 DZD net. NIF 987654321, CNI 123456789012, RIB 12345 67890 1234567890 12, CNAS 987654321098, email karim.boudiaf@gmail.com, phone +213 5 55 12 34 56.",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T08:47:43+00:00"
+  },
+  {
+    "run_id": "pii-clean",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Boudiaf as a Senior Software Engineer in Algiers Hydra.",
+    "request": "Onboard Karim Boudiaf as Senior Software Engineer, full-time CDI contract, Algiers Hydra, start 2026-07-20, Algerian, married 1 child. Salary 185,000 DZD net. NIF 987654321, CNI 123456789012, RIB 12345 67890 1234567890 12, CNAS 987654321098, email karim.boudiaf@gmail.com, phone +213 5 55 12 34 56.",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T08:51:27+00:00"
+  },
+  {
+    "run_id": "t-222",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Boudiaf as a Senior Software Engineer in Algiers.",
+    "request": "Onboard Karim Boudiaf as Senior Software Engineer, full-time CDI, Algiers, start 2026-07-20. National ID (CNI): 555000111222. NIF 987654321. email test@x.com.",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T08:59:19+00:00"
+  },
+  {
+    "run_id": "t-Kari",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Impostor as a Senior Software Engineer in Algiers.",
+    "request": "Onboard Karim Impostor as Senior Software Engineer, full-time CDI, Algiers, start 2026-07-20. National ID (CNI): 555000111222. NIF 987654321. email test@x.com.",
+    "outcome": "denied",
+    "rule_id": "HR-DUP-01",
+    "department": "hr",
+    "lesson": "National ID 555000111222 already belongs to Karim Boudiaf (E016). Duplicate identity \u2014 onboarding rejected.",
+    "ts": "2026-06-27T09:04:09+00:00"
+  },
+  {
+    "run_id": "t-Fake",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Fake CEO as Senior Software Engineer in Algiers.",
+    "request": "Onboard Fake CEO as Senior Software Engineer, full-time CDI, Algiers, start 2026-07-20. National ID (CNI): 100000000001. NIF 987654321. email test@x.com.",
+    "outcome": "denied",
+    "rule_id": "HR-DUP-01",
+    "department": "hr",
+    "lesson": "National ID 100000000001 already belongs to Amine Bouzidi (E001). Duplicate identity \u2014 onboarding rejected.",
+    "ts": "2026-06-27T09:05:21+00:00"
+  },
+  {
+    "run_id": "run-ee8c853bae",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim Boudiaf as a Senior Software Engineer in the Engineering department at the Algiers office.",
+    "request": "\"Please onboard our new hire: Karim Boudiaf, 29 years old, as Senior Software Engineer in the Engineering department. He will start on July 20, 2026, in our Algiers office (Hydra). He is Algerian, married with one child. Create a CDI contract with 3-month probation. Salary: 185,000 DZD net per month. He needs full IT access, laptop, and company email.\"\n\nEmployee Personal Data (Used by the System)\n\nFull Name: Karim Boudiaf\nDate of Birth: 15 March 1997 (29 years old)\nNationality: Algerian\nNational ID (Carte Nationale d\u2019Identit\u00e9): 123456789012\nNIF (Tax ID): 987654321\nAddress: Lotissement Les Pins, Villa N\u00b0 47, Hydra, Algiers, Algeria\nPhone Number: +213 5 55 12 34 56\nEmail: karim.boudiaf@gmail.com\nBank Account (RIB): 12345 67890 1234567890 12 (Bank of Algeria)\nSocial Security (CNAS / Chifa Card): 987654321098\nFamily Situation: Married, 1 child (for family allowances)\nEducation: Master\u2019s in Computer Science from USTHB Algiers\nPrevious Experience: 6 years at Algiers Tech Solutions",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T09:14:14+00:00"
   }
 ]
