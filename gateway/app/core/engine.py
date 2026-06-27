@@ -1,7 +1,7 @@
 """
 Bridge to the orchestration engine in agents-orch/.
 
-The gateway never reimplements engine logic — it imports the compiled LangGraph app and
+The gateway never reimplements engine logic - it imports the compiled LangGraph app and
 helper modules. agents-orch is not an installed package, so we add it to sys.path once here.
 """
 

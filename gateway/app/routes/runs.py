@@ -1,4 +1,4 @@
-"""Run routes — submit a request, stream it live, fetch state, clear a freeze."""
+"""Run routes - submit a request, stream it live, fetch state, clear a freeze."""
 
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ async def run_graph(run_id: str, p: Principal = Depends(require_auth)):
     """Reconstruct a node graph from the run's persisted logs (for /workflows).
 
     Nodes are the distinct agents that ran. Edges follow the orchestration
-    topology: planner → every department worker/manager → governance →
+    topology: planner -> every department worker/manager -> governance ->
     reporter. We prefer an explicit `assigned_by` link when the engine set it,
     and otherwise infer edges from the agent's level so the graph is always
     connected (the saved logs rarely carry assigned_by).
@@ -98,19 +98,19 @@ async def run_graph(run_id: str, p: Principal = Depends(require_auth)):
             seen.add((a, b))
             edges.append({"from": a, "to": b})
 
-    # chain the planner-level nodes (e.g. institutional_memory → planner)
+    # chain the planner-level nodes (e.g. institutional_memory -> planner)
     for pa in planners:
         link(pa, anchor)
-    # planner → each worker/manager
+    # planner -> each worker/manager
     for m in middles:
         link(anchor, m)
-    # workers/managers → governance overseer(s)
+    # workers/managers -> governance overseer(s)
     gov_entry = govs[0] if govs else None
     for m in middles:
         link(m, gov_entry)
     if not middles:
         link(anchor, gov_entry)
-    # chain governance nodes (overseer → reporter / frozen → reporter)
+    # chain governance nodes (overseer -> reporter / frozen -> reporter)
     for i in range(len(govs) - 1):
         link(govs[i], govs[i + 1])
 
@@ -206,7 +206,7 @@ async def clear_veto(run_id: str, body: ClearVetoBody, p: Principal = Depends(re
 
     is_deny = body.decision == "deny"
 
-    # feedback loop → memory learns the resolution
+    # feedback loop -> memory learns the resolution
     try:
         from app.core import engine
         engine.feedback(run_id, outcome=("denied" if is_deny else "done"),

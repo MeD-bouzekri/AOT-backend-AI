@@ -1,4 +1,4 @@
-"""Admin routes — live department stream, overview stats, sentinel insights,
+"""Admin routes - live department stream, overview stats, sentinel insights,
 and company_admin-only user management (Keycloak Admin API)."""
 
 from __future__ import annotations
@@ -160,6 +160,36 @@ async def admin_stream(ws: WebSocket):
 async def sentinel(p: Principal = Depends(require_auth)):
     """Proactive Sentinel scan (cashflow, vendor concentration, split invoices, ...)."""
     return engine.sentinel_scan()
+
+
+@router.get("/employees")
+async def list_employees(p: Principal = Depends(require_auth)):
+    """The company employee directory (seeded + onboarded). Department admins see
+    only their department; company_admin sees all."""
+    from sqlmodel import select
+    scope = p.scope()
+    with _db.get_session() as s:
+        rows = s.exec(select(_db.EmployeeRow).order_by(_db.EmployeeRow.created_at)).all()
+    if scope and scope != "ALL":
+        rows = [r for r in rows if r.department == scope]
+    return [{
+        "employee_code": r.employee_code,
+        "name": r.name,
+        "email": r.email,
+        "role": r.role,
+        "department": r.department,
+        "seniority": r.seniority,
+        "employment_type": r.employment_type,
+        "location": r.location,
+        "national_id": r.national_id,
+        "salary": r.salary,
+        "contract_type": r.contract_type,
+        "start_date": r.start_date,
+        "status": r.status,
+        "onboarded": r.source_run_id not in (None, "seed"),
+        "source_run_id": r.source_run_id,
+        "created_at": r.created_at.isoformat(),
+    } for r in rows]
 
 
 @router.get("/stats/overview")

@@ -1,5 +1,5 @@
 """
-Run service — execute a request through the engine, stream progress, persist, remember.
+Run service - execute a request through the engine, stream progress, persist, remember.
 
 Flow:
   1. create a Request row
@@ -51,7 +51,7 @@ def _persist_log(ev: dict) -> None:
                 policy_citation=ev.get("policy_citation"),
             ))
             s.commit()
-    except Exception:  # noqa: BLE001 — logging must never break a run
+    except Exception:  # noqa: BLE001 - logging must never break a run
         pass
 
 

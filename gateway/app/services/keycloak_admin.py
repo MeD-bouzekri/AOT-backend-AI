@@ -1,5 +1,5 @@
 """
-Keycloak Admin API client — server-side only.
+Keycloak Admin API client - server-side only.
 
 Creates users and assigns realm roles / department on behalf of a verified
 company_admin. The Keycloak admin credentials live in env (config) and NEVER
@@ -117,24 +117,30 @@ async def create_user(
     department: Optional[str],
 ) -> str:
     """
-    Create a realm user, set a one-time password (force reset on first login),
-    assign the given realm roles, and set the department attribute.
+    Create a realm user with a ready-to-use password (no forced reset, since the
+    app uses direct password grant), assign the given realm roles, and set the
+    department attribute.
 
     Returns the new user's id. Raises KeycloakAdminError on conflict/failure.
     """
     async with httpx.AsyncClient(timeout=15) as client:
         headers = await _auth_headers(client)
 
+        # The dashboard authenticates via direct password grant (no hosted-login
+        # redirect), so the user can never complete a UPDATE_PASSWORD / VERIFY_EMAIL
+        # required action. We therefore create the account ready to use: a permanent
+        # password, no pending actions, email pre-verified. The password is still a
+        # one-time secret shown once to the admin; the user should change it in-app.
         body: dict[str, Any] = {
             "username": username,
             "email": email,
             "firstName": first_name,
             "lastName": last_name,
             "enabled": True,
-            "emailVerified": False,
-            "requiredActions": ["UPDATE_PASSWORD"],
+            "emailVerified": True,
+            "requiredActions": [],
             "credentials": [
-                {"type": "password", "value": temp_password, "temporary": True}
+                {"type": "password", "value": temp_password, "temporary": False}
             ],
         }
         if department:

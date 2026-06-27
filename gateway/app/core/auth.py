@@ -2,8 +2,8 @@
 Authentication + role/department scoping.
 
 Two modes (same Principal out, so switching is contained):
-  DEV_AUTH=1  → role/department from headers X-Role / X-Department (dev the dashboard early)
-  Keycloak    → verify JWT vs realm JWKS, extract realm roles + department claim
+  DEV_AUTH=1  -> role/department from headers X-Role / X-Department (dev the dashboard early)
+  Keycloak    -> verify JWT vs realm JWKS, extract realm roles + department claim
 """
 
 from __future__ import annotations

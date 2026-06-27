@@ -1,4 +1,4 @@
-"""Settings routes — governance thresholds, hard rules, default Ollama LLM, mode."""
+"""Settings routes - governance thresholds, hard rules, default Ollama LLM, mode."""
 
 from __future__ import annotations
 

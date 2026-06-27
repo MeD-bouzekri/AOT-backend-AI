@@ -1,4 +1,4 @@
-"""Registry routes — list the agent/tool catalog; create user-built agents/tools."""
+"""Registry routes - list the agent/tool catalog; create user-built agents/tools."""
 
 from __future__ import annotations
 

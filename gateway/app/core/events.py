@@ -1,12 +1,12 @@
 """
-Event bus — async pub/sub for live StepEvents.
+Event bus - async pub/sub for live StepEvents.
 
 One publish fans out to:
-  - the run channel  (run:{run_id})    → the /run/{id} live view
-  - the dept channel (dept:{department}) → the admin dashboards
+  - the run channel  (run:{run_id})    -> the /run/{id} live view
+  - the dept channel (dept:{department}) -> the admin dashboards
 
 Each channel keeps a small replay buffer so a late-joining WebSocket gets recent history
-before live updates. In-memory (single process) — fine for the demo; swap for Redis pub/sub
+before live updates. In-memory (single process) - fine for the demo; swap for Redis pub/sub
 to scale horizontally.
 """
 

@@ -1,4 +1,4 @@
-"""LLM routes — Ollama validation + model listing (sensitive data → local only)."""
+"""LLM routes - Ollama validation + model listing (sensitive data -> local only)."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Logs routes — the audit trail (powers the logs page)."""
+"""Logs routes - the audit trail (powers the logs page)."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Gateway settings — environment-driven configuration."""
+"""Gateway settings - environment-driven configuration."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ class Settings:
         "KEYCLOAK_ISSUER", "http://localhost:8080/realms/orchestrai")
     KEYCLOAK_AUDIENCE: str = os.getenv("KEYCLOAK_AUDIENCE", "account")
 
-    # Keycloak Admin API — server-side only; NEVER exposed to the frontend.
+    # Keycloak Admin API - server-side only; NEVER exposed to the frontend.
     # Used to create users / assign roles on behalf of a company_admin.
     KEYCLOAK_BASE_URL: str = os.getenv("KEYCLOAK_BASE_URL", "http://localhost:8080")
     KEYCLOAK_REALM: str = os.getenv("KEYCLOAK_REALM", "orchestrai")
@@ -24,7 +24,7 @@ class Settings:
     KEYCLOAK_ADMIN_USER: str = os.getenv("KEYCLOAK_ADMIN_USER", "admin")
     KEYCLOAK_ADMIN_PASSWORD: str = os.getenv("KEYCLOAK_ADMIN_PASSWORD", "admin")
 
-    # CORS — the Next.js dashboard origin(s)
+    # CORS - the Next.js dashboard origin(s)
     CORS_ORIGINS: list[str] = [
         o.strip() for o in os.getenv(
             "CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
