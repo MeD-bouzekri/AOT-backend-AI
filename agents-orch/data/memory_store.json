@@ -54,5 +54,38 @@
     "lesson": "SEC-04 cleared by CISO: deny",
     "ts": "2026-06-26T14:16:35+00:00",
     "feedback_ts": "2026-06-26T14:17:21+00:00"
+  },
+  {
+    "run_id": "run-e10fab8d65",
+    "domain": "hr_onboarding",
+    "summary": "Onboard a remote mid-level software engineer contractor requiring production access.",
+    "request": "Onboarde alaa bouzidi , a mid-level software engineer contractor, remote, who needs production access.",
+    "outcome": "frozen",
+    "rule_id": "SEC-04",
+    "department": "it",
+    "lesson": "Contractor is requesting production access. Blocked pending security review.",
+    "ts": "2026-06-26T19:43:52+00:00"
+  },
+  {
+    "run_id": "run-fdeb626c2b",
+    "domain": "hr_onboarding",
+    "summary": "Onboarding",
+    "request": "\"Please onboard our new hire: Karim Boudiaf, 29 years old, as Senior Software Engineer in the Engineering department. He will start on July 20, 2026, in our Algiers office (Hydra). He is Algerian, married with one child. Create a CDI contract with 3-month probation. Salary: 185,000 DZD net per month. He needs full IT access, laptop, and company email.\"\n\nEmployee Personal Data (Used by the System)\n\nFull Name: Karim Boudiaf\nDate of Birth: 15 March 1997 (29 years old)\nNationality: Algerian\nNational ID (Carte Nationale d\u2019Identit\u00e9): 123456789012\nNIF (Tax ID): 987654321\nAddress: Lotissement Les Pins, Villa N\u00b0 47, Hydra, Algiers, Algeria\nPhone Number: +213 5 55 12 34 56\nEmail: karim.boudiaf@gmail.com\nBank Account (RIB): 12345 67890 1234567890 12 (Bank of Algeria)\nSocial Security (CNAS / Chifa Card): 987654321098\nFamily Situation: Married, 1 child (for family allowances)\nEducation: Master\u2019s in Computer Science from USTHB Algiers\nPrevious Experience: 6 years at Algiers Tech Solutions",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T05:25:38+00:00"
+  },
+  {
+    "run_id": "run-d32836965d",
+    "domain": "hr_onboarding",
+    "summary": "Onboard Karim bouzekri as a Senior Software Engineer in Algiers with full IT access and payroll setup.",
+    "request": "\"Please onboard our new hire: Karim bouzekri, 29 years old, as Senior Software Engineer in the Engineering department. He will start on July 20, 2026, in our Algiers office (Hydra). He is Algerian, married with one child. Create a CDI contract with 3-month probation. Salary: 185,000 DZD net per month. He needs full IT access, laptop, and company email.\"\n\nEmployee Personal Data (Used by the System)\n\nFull Name: Karim Boudiaf\nDate of Birth: 15 March 1997 (29 years old)\nNationality: Algerian\nNational ID (Carte Nationale d\u2019Identit\u00e9): 123456789012\nNIF (Tax ID): 987654321\nAddress: Lotissement Les Pins, Villa N\u00b0 47, Hydra, Algiers, Algeria\nPhone Number: +213 5 55 12 34 56\nEmail: karim.boudiaf@gmail.com\nBank Account (RIB): 12345 67890 1234567890 12 (Bank of Algeria)\nSocial Security (CNAS / Chifa Card): 987654321098\nFamily Situation: Married, 1 child (for family allowances)\nEducation: Master\u2019s in Computer Science from USTHB Algiers\nPrevious Experience: 6 years at Algiers Tech Solutions",
+    "outcome": "done",
+    "rule_id": null,
+    "department": null,
+    "lesson": "",
+    "ts": "2026-06-27T05:46:12+00:00"
   }
 ]

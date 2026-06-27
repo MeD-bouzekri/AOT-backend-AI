@@ -30,6 +30,13 @@ class Settings:
             "CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
         ).split(",") if o.strip()
     ]
+    # With allow_credentials=True a literal "*" is rejected by browsers, so we
+    # match tunnels (ngrok, etc.) by regex and echo the real origin back.
+    # Default allows localhost + any *.ngrok / *.ngrok-free.app host.
+    CORS_ORIGIN_REGEX: str = os.getenv(
+        "CORS_ORIGIN_REGEX",
+        r"https?://(localhost|127\.0\.0\.1)(:\d+)?|https://.*\.(ngrok\.io|ngrok-free\.app|ngrok\.app)",
+    )
 
     # engine
     MODE: str = os.getenv("MODE", "live")            # live | demo

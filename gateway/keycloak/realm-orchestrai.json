@@ -24,9 +24,9 @@
       "publicClient": true,
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true,
-      "redirectUris": ["http://localhost:3000/*"],
-      "webOrigins": ["http://localhost:3000"],
-      "attributes": { "post.logout.redirect.uris": "http://localhost:3000/*" },
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "attributes": { "post.logout.redirect.uris": "+" },
       "defaultClientScopes": ["roles", "profile", "email", "web-origins", "department-scope"],
       "optionalClientScopes": ["offline_access"]
     }

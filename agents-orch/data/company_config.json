@@ -201,6 +201,6 @@
   "default_llm": {
     "provider": "ollama",
     "base_url": "https://overmorally-bootyless-luciana.ngrok-free.dev/",
-    "model": "gemma4:e4b-it-qat"
+    "model": "gemma4:12b-it-qat"
   }
 }

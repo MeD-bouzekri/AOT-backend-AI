@@ -24,10 +24,6 @@ Orchestra turns a plain-language enterprise request — *"onboard a contractor"*
 
 </div>
 
-```
-START → Planner → Departments → Governance → ┬── (veto) ──→ Frozen ──→ END
-                                             └── (clean) ──→ Reporter ─→ END
-```
 
 The engine is a real **LangGraph `StateGraph`** with conditional routing and shared typed state. A vetoed run routes **only** to the frozen terminal — there is no graph edge from a freeze to execution.
 

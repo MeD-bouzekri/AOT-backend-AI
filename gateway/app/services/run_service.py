@@ -79,10 +79,18 @@ async def _execute(run_id: str, raw_text: str) -> None:
     # a thread so the loop stays responsive, then replay events with persistence + publish.
     final = await loop.run_in_executor(None, engine.run_graph, raw_text, run_id)
 
-    for ev in final.get("events", []):
+    # Replay engine events with a small pace so the live timeline animates
+    # step-by-step instead of dumping all at once. The report step (long ASCII
+    # blob) and bookkeeping steps publish without an extra wait.
+    events = final.get("events", [])
+    for ev in events:
         d = _event_to_dict(ev)
         _persist_log(d)
         await bus.publish_event(d)
+        phase = d.get("phase", "")
+        is_report = phase in ("Final report", "Report (frozen)")
+        if not is_report:
+            await asyncio.sleep(0.35)
 
     # finalize Run row
     plan = final.get("plan")
